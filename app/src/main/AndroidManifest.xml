@@ -12,6 +12,12 @@
         tools:replace="android:icon"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".LoginActivity">
+
+        </activity>
+        <activity android:name=".PlayerActivity" android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -52,4 +52,5 @@ dependencies {
 
 
     compile 'me.leefeng:library:1.0.3'
+    compile 'fm.jiecao:jiecaovideoplayer:4.8.1'
 }
