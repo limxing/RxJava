@@ -1,5 +1,7 @@
 package me.leefeng.rxjava.player;
 
+import com.limxing.library.utils.LogUtils;
+
 /**
  * Created by limxing on 2016/10/27.
  */
@@ -34,12 +36,16 @@ public class PlayerItemBean {
     }
 
     public String getUrl() {
-        String u = "C00S00P00";
-        String[] s = name.substring(0, name.indexOf(" ")).split(".");
-        if (s.length > 0) {
-            u = "C" + String.format("%04d", s[0]) + "S" + String.format("%04d", s[1]);
-            if (s.length > 2) {
-                u = u + "P" + String.format("%04d", s[2]);
+        String u = "C01S00P00";
+        if (name.indexOf(" ") > 0) {
+            String[] s = name.substring(0, name.indexOf(" ")).split("\\.");
+            if (s.length > 0) {
+                u = "C" + String.format("%02d", Integer.parseInt(s[0])) + "S" + String.format("%02d", Integer.parseInt(s[1]));
+                if (s.length > 2) {
+                    u = u + "P" + String.format("%02d", Integer.parseInt(s[2]));
+                } else {
+                    u = u + "P00";
+                }
             }
         }
         return u;

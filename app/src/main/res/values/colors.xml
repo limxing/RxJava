@@ -6,4 +6,5 @@
 
 
     <color name="bac">#03ac4a</color>
+    <color name="bac_pressed">#03bf4a</color>
 </resources>

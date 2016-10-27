@@ -40,7 +40,7 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
         index = getIntent().getIntExtra("index", 0);
         List<String> list = JSON.parseArray(getIntent().getStringExtra("list"), String.class);
         if (list.size() == 0) {
-            ToastUtils.showShort(this, "本单元暂时没事视频");
+            ToastUtils.showShort(this, "本单元暂时没视频");
             return;
         }
         playerItemBeanList = new ArrayList<PlayerItemBean>();
@@ -51,7 +51,7 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
 
         player = (JCVideoPlayerStandard) findViewById(R.id.player);
-        player.setUp("http://119.90.20.36/wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014" + playerItemBeanList.get(0).getUrl() + "-300K.mp4?wsiphost=local"
+        player.setUp("http://wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014" + playerItemBeanList.get(0).getUrl() + "-300K.mp4?wsiphost=local"
                 , JCVideoPlayerStandard.SCREEN_LAYOUT_LIST, list.get(0));
         player.thumbImageView.setImageResource(R.drawable.default_player);
 //        http://wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014C01S00P00-300K.mp4
@@ -123,7 +123,7 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
         player.onCompletion();
         player.onPrepared();
-        player.setUp("http://119.90.20.36/wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014" +
+        player.setUp("http://wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014" +
                         playerItemBeanList.get(i).getUrl() + "-300K.mp4?wsiphost=local"
                 , JCVideoPlayerStandard.SCREEN_LAYOUT_LIST, playerItemBeanList.get(i).getName());
         player.startPlayLogic();

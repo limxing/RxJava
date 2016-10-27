@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RxJava</string>
+    <string name="app_name">北大网络课程</string>
     <string name="home_name">姓\t\t\t名：</string>
     <string name="home_bmh">报名号：</string>
     <string name="home_xh">学\t\t\t号：</string>
