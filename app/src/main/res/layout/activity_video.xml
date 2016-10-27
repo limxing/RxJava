@@ -7,6 +7,8 @@
     android:orientation="vertical"
     tools:context="me.leefeng.rxjava.MainActivity">
 
+    <include layout="@layout/activity_title" />
+
     <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
         android:id="@+id/player"
         android:layout_width="match_parent"
@@ -15,11 +17,11 @@
     <!--android:id="@+id/evp"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content" />-->
-<ListView
-    android:id="@+id/player_listview"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    <ListView
+        android:id="@+id/player_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</ListView>
+    </ListView>
 
 </LinearLayout>

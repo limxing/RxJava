@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.limxing.library.utils.ToastUtils;
@@ -38,6 +39,7 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
     @Override
     protected void initView() {
         index = getIntent().getIntExtra("index", 0);
+        ((TextView) findViewById(R.id.title_name)).setText(getIntent().getStringExtra("title"));
         List<String> list = JSON.parseArray(getIntent().getStringExtra("list"), String.class);
         if (list.size() == 0) {
             ToastUtils.showShort(this, "本单元暂时没视频");

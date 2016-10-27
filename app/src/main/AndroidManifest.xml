@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.GET_TASKS"  />
+
     <application
         android:name=".BeidaApplication"
         android:allowBackup="true"
@@ -24,25 +29,32 @@
         </activity>
         <activity
             android:name=".player.PlayerActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/FullScreen">
+            android:configChanges="orientation|screenSize">
 
         </activity>
 
         <activity
             android:name=".login.LoginActivity"
             android:configChanges="orientation|screenSize">
+
+        </activity>
+        <activity
+            android:name=".main.MainActivity"
+            android:configChanges="orientation|screenSize"></activity>
+        <activity android:name=".video.VideoListActivity" />
+        <activity android:name=".WelcomeActivity" android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".main.MainActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity android:name=".video.VideoListActivity" />
+        <meta-data android:value="b9e98b3e0431d38dd2f72353429afb7b" android:name="BUG_HD_SDK_GENERAL_KEY" />
+        <meta-data android:value="581194de1061d24a13002d77" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="QQ" android:name="UMENG_CHANNEL"/>
 
+        <meta-data android:name="334836D7C79148F2ABE6078B09FF97BC" android:value="Your_app_id" />
+        <meta-data android:name="QQ" android:value="Your_channel_id" />
     </application>
 
 </manifest>

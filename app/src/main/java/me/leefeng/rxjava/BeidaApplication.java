@@ -4,12 +4,16 @@ import android.app.Application;
 import android.util.Log;
 
 import com.limxing.library.utils.LogUtils;
+import com.tendcloud.tenddata.TCAgent;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.analytics.MobclickAgent.UMAnalyticsConfig;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import im.fir.sdk.FIR;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -59,6 +63,7 @@ public class BeidaApplication extends Application {
 
         );
         okHttpClient = builder.build();
-
+        FIR.init(this);
+        TCAgent.init(this, "334836D7C79148F2ABE6078B09FF97BC", "QQ");
     }
 }

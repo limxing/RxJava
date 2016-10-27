@@ -3,6 +3,7 @@ package me.leefeng.rxjava.main;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
@@ -37,7 +38,7 @@ public class MainActivity extends BeidaActivity implements BottomNavigationBar.O
         xh = getIntent().getStringExtra("xh");
         ToastUtils.showLong(mContext, "欢迎" + name + "同学");
         title_name = (TextView) findViewById(R.id.title_name);
-
+        findViewById(R.id.title_back).setVisibility(View.GONE);
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
 //        bottomNavigationBar
 //                .setMode(BottomNavigationBar.MODE_SHIFTING);

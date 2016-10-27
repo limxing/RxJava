@@ -2,7 +2,10 @@ package me.leefeng.rxjava.login;
 
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -38,10 +41,12 @@ public class LoginActivity extends BeidaActivity {
         TextView title_name = (TextView) findViewById(R.id.title_name);
         title_name.setText("登录");
 
-        if (!SharedPreferencesUtil.getStringData(this, "username", "").isEmpty()) {
-            goLogin(SharedPreferencesUtil.getStringData(this, "username", ""),
-                    SharedPreferencesUtil.getStringData(this, "password", ""));
+
+        if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
+            goLogin(SharedPreferencesUtil.getStringData(mContext, "username", ""),
+                    SharedPreferencesUtil.getStringData(mContext, "password", ""));
         }
+
     }
 
     @Override
@@ -93,6 +98,24 @@ public class LoginActivity extends BeidaActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String current = "";
                 final String str = response.body().string();
+                if (str.contains("用户名错误")) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            svProgressHUD.showErrorWithStatus("登录失败，用户名错误");
+                        }
+                    });
+                    return;
+                } else if (str.contains("密码错误")) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            svProgressHUD.showErrorWithStatus("登录失败，密码错误");
+                        }
+                    });
+                    return;
+                }
+
                 int i = str.indexOf("<div class=\"head_wid1\">");
                 final String name = str.substring(i + 23, i + 27).trim();
                 i = str.indexOf("http://202.152.177.118/zsphoto");

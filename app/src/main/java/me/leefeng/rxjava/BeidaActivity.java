@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.limxing.library.NoTitleBar.SystemBarTintManager;
 import com.limxing.library.SVProgressHUD.SVProgressHUD;
+import com.umeng.analytics.MobclickAgent;
 
 
 /**
@@ -24,8 +25,8 @@ public abstract class BeidaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SystemBarTintManager.initSystemBar(this);
         setContentView(getView());
-        mContext=this;
-        svProgressHUD= new SVProgressHUD(this);
+        mContext = this;
+        svProgressHUD = new SVProgressHUD(this);
 
         initView();
     }
@@ -33,11 +34,29 @@ public abstract class BeidaActivity extends AppCompatActivity {
     protected abstract void initView();
 
     protected abstract int getView();
+
     protected void closeInput() {
         View view = getWindow().peekDecorView();
         if (view != null) {
             InputMethodManager inputmanger = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    public void back(View view) {
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        MobclickAgent.onResume(mContext);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        MobclickAgent.onPause(mContext);
     }
 }
