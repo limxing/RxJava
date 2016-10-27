@@ -9,6 +9,9 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.limxing.library.utils.ToastUtils;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.R;
 
@@ -33,7 +36,7 @@ public class MainActivity extends BeidaActivity implements BottomNavigationBar.O
         bmh = getIntent().getStringExtra("bmh");
         xh = getIntent().getStringExtra("xh");
         ToastUtils.showLong(mContext, "欢迎" + name + "同学");
-        title_name=(TextView)findViewById(R.id.title_name);
+        title_name = (TextView) findViewById(R.id.title_name);
 
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
 //        bottomNavigationBar
@@ -81,7 +84,7 @@ public class MainActivity extends BeidaActivity implements BottomNavigationBar.O
                 break;
             case 2:
                 if (downloadFragment == null) {
-                    downloadFragment =new DownloadFragment();
+                    downloadFragment = new DownloadFragment();
                 }
                 transaction.replace(R.id.tb, downloadFragment);
                 title_name.setText("离线视频");
@@ -101,5 +104,27 @@ public class MainActivity extends BeidaActivity implements BottomNavigationBar.O
     @Override
     public void onTabReselected(int position) {
 
+    }
+
+    // 设置再按一次退出程序
+    long waitTime = 2000;
+    long touchTime = 0;
+
+    @Override
+    public void onBackPressed() {
+        goOut();
+    }
+
+    /**
+     * 退出确认
+     */
+    void goOut() {
+        long currentTime = System.currentTimeMillis();
+        if ((currentTime - touchTime) >= waitTime) {
+            ToastUtils.showShort(this, "再按一次退出");
+            touchTime = currentTime;
+        } else {
+            finish();
+        }
     }
 }

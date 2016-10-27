@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.limxing.library.utils.LogUtils;
+import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.StringUtils;
 
 import java.io.IOException;
@@ -36,6 +37,11 @@ public class LoginActivity extends BeidaActivity {
         login_pw = (EditText) findViewById(R.id.login_pw);
         TextView title_name = (TextView) findViewById(R.id.title_name);
         title_name.setText("登录");
+
+        if (!SharedPreferencesUtil.getStringData(this, "username", "").isEmpty()) {
+            goLogin(SharedPreferencesUtil.getStringData(this, "username", ""),
+                    SharedPreferencesUtil.getStringData(this, "password", ""));
+        }
     }
 
     @Override
@@ -56,11 +62,14 @@ public class LoginActivity extends BeidaActivity {
             svProgressHUD.showErrorWithStatus("请填写密码");
             return;
         }
-        svProgressHUD.showLoading("正在登录");
+        goLogin(id, pw);
+    }
 
+    private void goLogin(final String id, final String pw) {
+        svProgressHUD.showLoading("正在登录");
         RequestBody formBody = new FormBody.Builder()
-                .add("myID", "616390000002")
-                .add("myPW", "woaifeng521")
+                .add("myID", id)
+                .add("myPW", pw)
                 .add("usersf", "1")
                 .build();
 
@@ -82,24 +91,26 @@ public class LoginActivity extends BeidaActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String current="";
+                String current = "";
                 final String str = response.body().string();
                 int i = str.indexOf("<div class=\"head_wid1\">");
                 final String name = str.substring(i + 23, i + 27).trim();
                 i = str.indexOf("http://202.152.177.118/zsphoto");
                 final String pic = str.substring(i, i + 67);
-                i=str.indexOf("报名号</strong>");
-                final String bmh=str.substring(i+13,i+28).trim();
-                current="学&nbsp;&nbsp;&nbsp;号</strong>：";
-                i=str.indexOf(current);
-                final String xh=str.substring(i+current.length(),i+current.length()+14).trim();
+                i = str.indexOf("报名号</strong>");
+                final String bmh = str.substring(i + 13, i + 28).trim();
+                current = "学&nbsp;&nbsp;&nbsp;号</strong>：";
+                i = str.indexOf(current);
+                final String xh = str.substring(i + current.length(), i + current.length() + 14).trim();
 
 
-                LogUtils.i("pic:" + pic+"=bmh:"+bmh);
+                LogUtils.i("pic:" + pic + "=bmh:" + bmh);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         svProgressHUD.dismissImmediately();
+                        SharedPreferencesUtil.saveStringData(mContext, "username", id);
+                        SharedPreferencesUtil.saveStringData(mContext, "password", pw);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("name", name);
                         intent.putExtra("pic", pic);

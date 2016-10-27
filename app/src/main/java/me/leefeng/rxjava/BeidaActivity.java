@@ -25,8 +25,9 @@ public abstract class BeidaActivity extends AppCompatActivity {
         SystemBarTintManager.initSystemBar(this);
         setContentView(getView());
         mContext=this;
+        svProgressHUD= new SVProgressHUD(this);
+
         initView();
-         svProgressHUD= new SVProgressHUD(this);
     }
 
     protected abstract void initView();
