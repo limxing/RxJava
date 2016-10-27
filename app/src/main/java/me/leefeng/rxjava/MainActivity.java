@@ -44,53 +44,53 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setStatusBarDarkMode(true,this);
         setContentView(R.layout.activity_main);
-        final ImageView drawable = (ImageView) findViewById(R.id.drawable);
-//        简单数组打印
-        String[] s = {"Hello", "Android", "JAVA", "OC", "Swift"};
-
-        Observable.from(s)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        Log.i("Main", s);
-                    }
-                });
-
-
-//        加载图片
-
-        Observable.create(new Observable.OnSubscribe<Drawable>() {
-            @Override
-            public void call(Subscriber<? super Drawable> subscriber) {
-                try {
-                    Thread.sleep(2000);
-                    Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
-                    subscriber.onNext(drawable);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Drawable>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Drawable s) {
-                        drawable.setImageDrawable(s);
-                    }
-                });
+//        final ImageView drawable = (ImageView) findViewById(R.id.drawable);
+////        简单数组打印
+//        String[] s = {"Hello", "Android", "JAVA", "OC", "Swift"};
+//
+//        Observable.from(s)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Action1<String>() {
+//                    @Override
+//                    public void call(String s) {
+//                        Log.i("Main", s);
+//                    }
+//                });
+//
+//
+////        加载图片
+//
+//        Observable.create(new Observable.OnSubscribe<Drawable>() {
+//            @Override
+//            public void call(Subscriber<? super Drawable> subscriber) {
+//                try {
+//                    Thread.sleep(2000);
+//                    Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
+//                    subscriber.onNext(drawable);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<Drawable>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(Drawable s) {
+//                        drawable.setImageDrawable(s);
+//                    }
+//                });
 
 
 //        网络请求

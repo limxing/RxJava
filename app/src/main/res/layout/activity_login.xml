@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/login_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="学号/报名号"
+            android:inputType="number"
+            android:singleLine="true"
+            app:met_floatingLabel="normal"
+            app:met_maxCharacters="12"
+            app:met_primaryColor="@color/bac" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/login_pw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="密码"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            app:met_floatingLabel="normal"
+            app:met_primaryColor="@color/bac" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/bac"
+            android:onClick="login"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="登录" />
+
+    </LinearLayout>
+</LinearLayout>

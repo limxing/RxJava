@@ -43,61 +43,35 @@ import rx.schedulers.Schedulers;
 public class LoginActivity extends AppCompatActivity {
     private WebView webView;
     private BeiDaApi beiDaApi;
-    private OkHttpClient client;
+//    private OkHttpClient client;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        webView = (WebView) findViewById(R.id.webView);
-        webView.getSettings() .setJavaScriptEnabled(true);
-        final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.cookieJar(new CookieJar() {
-                              private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+//        webView = (WebView) findViewById(R.id.webView);
+//        webView.getSettings() .setJavaScriptEnabled(true);
 
-                              @Override
-                              public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                                  for (Cookie cookie : cookies)
-                                      LogUtils.i(url + "==" + cookie.toString());
-                                  cookieStore.put(url, cookies);
-                              }
 
-                              @Override
-                              public List<Cookie> loadForRequest(HttpUrl url) {
-                                  List<Cookie> cookies = cookieStore.get(url);
-                                  return cookies != null ? cookies : new ArrayList<Cookie>();
-                              }
-                          }
 
-        );
-        builder.addInterceptor(new Interceptor() {
-                                   @Override
-                                   public Response intercept(Chain chain) throws IOException {
-                                       Request request = chain.request();
-                                       Log.i("limxingg", request.url().toString());
-                                       Response response = chain.proceed(request);
-                                       return response;
-                                   }
-                               }
 
-        );
-        client = builder.build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://learn.pkudl.cn")
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
+                .client(BeidaApplication.okHttpClient)
                 .build();
         beiDaApi = retrofit.create(BeiDaApi.class);
 
-        okhttpTest(client);
+        okhttpTest(BeidaApplication.okHttpClient);
 
 
     }
 
     public void kcxx(View view) {
 
-        List<Cookie> cookies=client.cookieJar().loadForRequest(HttpUrl.parse("http://learn.pkudl.cn/"));
+        List<Cookie> cookies=BeidaApplication.okHttpClient.cookieJar().loadForRequest(HttpUrl.parse("http://learn.pkudl.cn/"));
         beiDaApi.test1(cookieHeader(cookies),"08281014")
 
                 .observeOn(AndroidSchedulers.mainThread())
