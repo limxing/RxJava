@@ -48,13 +48,15 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
 
     private HomeFragment homeFragment;
     private VideoFragment videoFragment;
-    private DownloadFragment downloadFragment;
+    //    private DownloadFragment downloadFragment;
     public static String name;
     public static String pic;
     public static String bmh;
     public static String xh;
     private TextView title_name;
     private MainPreImp mainPre;
+    private ChatFragment chatFragment;
+    private View title_right_image;
 
     @Override
     protected void initView() {
@@ -64,18 +66,20 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
         xh = getIntent().getStringExtra("xh");
         ToastUtils.showLong(mContext, "欢迎" + name + "同学");
         title_name = (TextView) findViewById(R.id.title_name);
+        title_right_image= findViewById(R.id.title_right_image);
         findViewById(R.id.title_back).setVisibility(View.GONE);
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-//        bottomNavigationBar
-//                .setMode(BottomNavigationBar.MODE_SHIFTING);
         bottomNavigationBar
                 .setActiveColor(R.color.bac);
 //                .setInActiveColor(R.color.bac)
 //                .setBarBackgroundColor("#ECECEC");
         bottomNavigationBar
+                .setMode(BottomNavigationBar.MODE_FIXED);
+        bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.home, "个人信息"))
+                .addItem(new BottomNavigationItem(R.drawable.chat, "沟通"))
                 .addItem(new BottomNavigationItem(R.drawable.video, "课程学习"))
-                .addItem(new BottomNavigationItem(R.drawable.download, "离线视频"))
+//                .addItem(new BottomNavigationItem(R.drawable.download, "离线视频"))
                 .initialise();
         bottomNavigationBar.setTabSelectedListener(this);
 
@@ -104,21 +108,31 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
                 }
                 transaction.replace(R.id.tb, homeFragment);
                 title_name.setText("个人信息");
+                title_right_image.setVisibility(View.GONE);
                 break;
             case 1:
+                if (chatFragment == null) {
+                    chatFragment = ChatFragment.getInstance(this);
+                }
+                transaction.replace(R.id.tb, chatFragment);
+                title_name.setText("沟通");
+                title_right_image.setVisibility(View.GONE);
+                break;
+            case 2:
                 if (videoFragment == null) {
                     videoFragment = VideoFragment.getInstance(this);
                 }
                 transaction.replace(R.id.tb, videoFragment);
                 title_name.setText("课程学习");
+                title_right_image.setVisibility(View.VISIBLE);
                 break;
-            case 2:
-                if (downloadFragment == null) {
-                    downloadFragment = new DownloadFragment();
-                }
-                transaction.replace(R.id.tb, downloadFragment);
-                title_name.setText("离线视频");
-                break;
+//            case 3:
+//                if (downloadFragment == null) {
+//                    downloadFragment = new DownloadFragment();
+//                }
+//                transaction.replace(R.id.tb, downloadFragment);
+//                title_name.setText("离线视频");
+//                break;
             default:
                 break;
         }
@@ -195,5 +209,13 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
                 }
             }
         }).show();
+    }
+
+    /**
+     * 缓存按钮
+     * @param view
+     */
+    public void toDownload(View view) {
+
     }
 }

@@ -3,6 +3,8 @@ package me.leefeng.rxjava;
 import android.app.Application;
 import android.util.Log;
 
+import com.alibaba.mobileim.YWAPI;
+import com.alibaba.wxlib.util.SysUtil;
 import com.bumptech.glide.Glide;
 import com.limxing.library.utils.LogUtils;
 import com.tendcloud.tenddata.TCAgent;
@@ -69,5 +71,18 @@ public class BeidaApplication extends Application {
 
         FIR.init(this);
         TCAgent.init(this, "334836D7C79148F2ABE6078B09FF97BC", "QQ");
+
+
+        final String APP_KEY = "23498343";
+//必须首先执行这部分代码, 如果在":TCMSSevice"进程中，无需进行云旺（OpenIM）和app业务的初始化，以节省内存;
+        SysUtil.setApplication(this);
+        if (SysUtil.isTCMSServiceProcess(this)) {
+            return;
+        }
+//第一个参数是Application Context
+//这里的APP_KEY即应用创建时申请的APP_KEY，同时初始化必须是在主进程中
+        if (SysUtil.isMainProcess()) {
+            YWAPI.init((Application) getApplicationContext(), APP_KEY);
+        }
     }
 }

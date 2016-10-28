@@ -33,32 +33,15 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/title_right_image"
+                android:paddingRight="20dp"
+                android:visibility="gone"
+                android:onClick="toDownload"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:paddingRight="20dp"
-                    android:src="@drawable/title_download" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/down_num_bac"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:text="6"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-                    android:textStyle="normal|bold" />
-            </RelativeLayout>
+                android:src="@drawable/download" />
         </RelativeLayout>
 
 
