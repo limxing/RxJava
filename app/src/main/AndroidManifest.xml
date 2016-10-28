@@ -40,14 +40,17 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity android:name=".video.VideoListActivity" />
-        <activity android:name=".WelcomeActivity" android:theme="@style/FullScreen">
+            android:configChanges="orientation|screenSize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".video.VideoListActivity" />
+        <activity android:name=".WelcomeActivity" android:theme="@style/FullScreen">
+
         </activity>
         <meta-data android:value="b9e98b3e0431d38dd2f72353429afb7b" android:name="BUG_HD_SDK_GENERAL_KEY" />
         <meta-data android:value="581194de1061d24a13002d77" android:name="UMENG_APPKEY"></meta-data>

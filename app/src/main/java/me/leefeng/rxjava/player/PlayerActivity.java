@@ -1,6 +1,8 @@
 package me.leefeng.rxjava.player;
 
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -9,13 +11,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.limxing.library.utils.FileUtils;
 import com.limxing.library.utils.ToastUtils;
+import com.limxing.publicc.alertview.AlertView;
+import com.limxing.publicc.alertview.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import me.leefeng.rxjava.BeidaActivity;
+import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.R;
 import nz.co.delacour.exposurevideoplayer.ExposureVideoPlayer;
 
@@ -28,7 +34,6 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
     private ExposureVideoPlayer evp;
     private ArrayList<PlayerItemBean> playerItemBeanList;
     private PlayerAdapter adapter;
-    private int index;
     private int current;
 
     @Override
@@ -38,9 +43,13 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
     @Override
     protected void initView() {
-        index = getIntent().getIntExtra("index", 0);
-        ((TextView) findViewById(R.id.title_name)).setText(getIntent().getStringExtra("title"));
-        List<String> list = JSON.parseArray(getIntent().getStringExtra("list"), String.class);
+        int chapter = getIntent().getIntExtra("chapter", 0);
+        int courseIndex = getIntent().getIntExtra("courseIndex", 0);
+        List<String> list = BeidaApplication.cList.get(courseIndex).getVideos().get(chapter);
+
+        ((TextView) findViewById(R.id.title_name)).setText(BeidaApplication.cList.get(courseIndex)
+                .getCatelogue().get(chapter));
+
         if (list.size() == 0) {
             ToastUtils.showShort(this, "本单元暂时没视频");
             return;
@@ -61,7 +70,7 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
 //        http://124.202.166.41/wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014C02S01P00-300K.mp4?wsiphost=local  2.1
 //        http://124.202.166.39/wms2.pkudl.cn/jsj/08281014/video/300k/Vc08281014C02S04P02-300K.mp4?wsiphost=local  2.4.2
-        player.startPlayLogic();
+
 
 //        evp = (ExposureVideoPlayer) findViewById(R.id.evp);
 //        evp.init(this);//You must include a Activity here, for the video player will not function correctly.
@@ -72,6 +81,18 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
         adapter = new PlayerAdapter(playerItemBeanList);
         player_listview.setAdapter(adapter);
         player_listview.setOnItemClickListener(this);
+//        if (isWiFiActive(this)) {
+        player.startPlayLogic();
+//        } else {
+//            new AlertView("您当前正在使用移动网络，继续播放将消耗流量", null, "停止播放", null, new String[]{"继续播放"}, this, AlertView.Style.Alert, new OnItemClickListener() {
+//                @Override
+//                public void onItemClick(Object o, int position) {
+//                    if (position == 0) {
+//                        player.startPlayLogic();
+//                    }
+//                }
+//            }).show();
+//        }
     }
 
     @Override
@@ -132,4 +153,11 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
 
     }
+
+//    public boolean isWiFiActive(Context inContext) {
+//        Context context = inContext.getApplicationContext();
+//        WifiManager wifiManager = (WifiManager) context
+//                .getSystemService(Context.WIFI_SERVICE);
+//        return wifiManager.isWifiEnabled();
+//    }
 }

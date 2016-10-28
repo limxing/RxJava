@@ -23,6 +23,7 @@ import okhttp3.Response;
  */
 
 public class WelcomeActivity extends BeidaActivity {
+
     @Override
     protected void initView() {
         new Thread() {
@@ -117,4 +118,9 @@ public class WelcomeActivity extends BeidaActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+
+    }
 }

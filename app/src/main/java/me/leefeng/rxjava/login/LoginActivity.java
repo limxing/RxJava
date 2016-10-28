@@ -40,7 +40,7 @@ public class LoginActivity extends BeidaActivity {
         login_pw = (EditText) findViewById(R.id.login_pw);
         TextView title_name = (TextView) findViewById(R.id.title_name);
         title_name.setText("登录");
-
+        findViewById(R.id.title_back).setVisibility(View.GONE);
 
         if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
             goLogin(SharedPreferencesUtil.getStringData(mContext, "username", ""),

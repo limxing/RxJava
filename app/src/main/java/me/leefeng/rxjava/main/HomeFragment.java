@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import me.leefeng.rxjava.R;
 
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment {
         Glide
                 .with(activity)
                 .load(activity.pic)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(home_image);
         return view;
     }

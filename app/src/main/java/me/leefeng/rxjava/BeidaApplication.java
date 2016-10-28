@@ -3,6 +3,7 @@ package me.leefeng.rxjava;
 import android.app.Application;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.limxing.library.utils.LogUtils;
 import com.tendcloud.tenddata.TCAgent;
 import com.umeng.analytics.MobclickAgent;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import im.fir.sdk.FIR;
+import me.leefeng.rxjava.main.Course;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -30,6 +32,7 @@ import okhttp3.Response;
 public class BeidaApplication extends Application {
 
     public static OkHttpClient okHttpClient;
+    public static List<Course> cList;
 
     @Override
     public void onCreate() {
@@ -63,6 +66,7 @@ public class BeidaApplication extends Application {
 
         );
         okHttpClient = builder.build();
+
         FIR.init(this);
         TCAgent.init(this, "334836D7C79148F2ABE6078B09FF97BC", "QQ");
     }
