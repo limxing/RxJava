@@ -32,6 +32,7 @@ public class MainPreImp implements MainPre {
     private final String course = "course.json";
     private MainApi mainApi;
     private File couseFile;
+    private String updateString;
 
     public MainPreImp(MainView mainView) {
         this.mainView = mainView;
@@ -57,6 +58,7 @@ public class MainPreImp implements MainPre {
                             Integer integer = null;
                             try {
                                 integer = JSON.parseObject(responseBody.string()).getIntValue("course");
+                                updateString = JSON.parseObject(responseBody.string()).getString("value");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -91,7 +93,7 @@ public class MainPreImp implements MainPre {
                         @Override
                         public void onNext(Boolean aBoolean) {
                             if (aBoolean != null && !aBoolean.booleanValue()) {
-                                mainView.updateDialog("课程有更新");
+                                mainView.updateDialog("课程有更新",updateString);
                             } else {
 
                             }
@@ -145,6 +147,7 @@ public class MainPreImp implements MainPre {
                     public void onNext(Integer integer) {
                         if (integer.intValue() == 1) {
                             mainView.showSuccessWithStatus("课程更新完成");
+                            mainView.updateCourse();
                         } else {
                             mainView.showErrorWithStatus("更新失败，请稍后重试");
                         }

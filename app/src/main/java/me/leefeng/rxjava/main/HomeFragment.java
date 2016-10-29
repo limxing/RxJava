@@ -48,6 +48,7 @@ public class HomeFragment extends Fragment {
         home_bmh.setText(getResources().getString(R.string.home_bmh) + activity.bmh);
         TextView home_xh = (TextView) view.findViewById(R.id.home_xh);
         home_xh.setText(getResources().getString(R.string.home_xh) + activity.xh);
+        ((TextView)view.findViewById(R.id.home_xf)).setText(activity.xf);
         ImageView home_image = (ImageView) view.findViewById(R.id.home_image);
         Glide
                 .with(activity)

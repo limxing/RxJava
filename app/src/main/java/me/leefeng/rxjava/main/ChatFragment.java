@@ -1,13 +1,33 @@
 package me.leefeng.rxjava.main;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.MenuCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
+import com.hyphenate.exceptions.HyphenateException;
+import com.limxing.library.utils.LogUtils;
+import com.limxing.library.utils.ToastUtils;
+
+import java.util.List;
+import java.util.Map;
+
 import me.leefeng.rxjava.R;
+import me.leefeng.rxjava.main.chat.ChatPagerAdapter;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.observers.Observers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by limxing on 2016/10/26.
@@ -15,7 +35,9 @@ import me.leefeng.rxjava.R;
 
 public class ChatFragment extends Fragment implements ViewPager.OnPageChangeListener {
 
+    private final ChatPagerAdapter chatPagerAdapter;
     private MainView mainView;
+    private View view;
 
     @Override
     public void onDestroy() {
@@ -23,11 +45,13 @@ public class ChatFragment extends Fragment implements ViewPager.OnPageChangeList
         mainView = null;
     }
 
-    public void setMainView(MainView mainView) {
+    public void setMainView(final MainView mainView) {
         this.mainView = mainView;
     }
 
     public ChatFragment() {
+//        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+        chatPagerAdapter = new ChatPagerAdapter();
 
     }
 
@@ -46,9 +70,12 @@ public class ChatFragment extends Fragment implements ViewPager.OnPageChangeList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        ViewPager chat_viewpager = (ViewPager) view.findViewById(R.id.chat_viewpager);
-        chat_viewpager.setOnPageChangeListener(this);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_chat, container, false);
+            ViewPager chat_viewpager = (ViewPager) view.findViewById(R.id.chat_viewpager);
+            chat_viewpager.setOnPageChangeListener(this);
+            chat_viewpager.setAdapter(chatPagerAdapter);
+        }
         return view;
     }
 

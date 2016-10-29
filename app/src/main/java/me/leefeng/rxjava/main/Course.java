@@ -12,7 +12,8 @@ public class Course {
     private String teacher;
     private String id;
     private List<String> catelogue;
-    private List<List<String>> videos;
+    private List<Video> videos;
+
 
     public String getName() {
         return name;
@@ -54,12 +55,41 @@ public class Course {
         this.catelogue = catelogue;
     }
 
-    public List<List<String>> getVideos() {
+    public List<Video> getVideos() {
         return videos;
     }
 
-    public void setVideos(List<List<String>> videos) {
+    public void setVideos(List<Video> videos) {
         this.videos = videos;
+    }
+
+    public class Video {
+        private String url;
+        private List<String> values;
+
+        public List<String> getValues() {
+            return values;
+        }
+
+        public void setValues(List<String> values) {
+            this.values = values;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public String toString() {
+            return "Video{" +
+                    "url='" + url + '\'' +
+                    ", values=" + values +
+                    '}';
+        }
     }
 
     @Override

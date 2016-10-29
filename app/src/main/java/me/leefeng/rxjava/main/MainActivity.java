@@ -1,44 +1,31 @@
 package me.leefeng.rxjava.main;
 
-import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.limxing.library.utils.IOUtils;
+import com.hyphenate.EMConnectionListener;
+import com.hyphenate.EMContactListener;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.util.NetUtils;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.ToastUtils;
 import com.limxing.publicc.alertview.AlertView;
 import com.limxing.publicc.alertview.OnItemClickListener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import me.leefeng.rxjava.BeidaActivity;
-import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.R;
-import okhttp3.ResponseBody;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import rx.subjects.Subject;
 
 /**
  * Created by limxing on 2016/10/26.
@@ -53,6 +40,7 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
     public static String pic;
     public static String bmh;
     public static String xh;
+    public static String xf;
     private TextView title_name;
     private MainPreImp mainPre;
     private ChatFragment chatFragment;
@@ -64,9 +52,11 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
         pic = getIntent().getStringExtra("pic");
         bmh = getIntent().getStringExtra("bmh");
         xh = getIntent().getStringExtra("xh");
+        xf = getIntent().getStringExtra("xf");
         ToastUtils.showLong(mContext, "欢迎" + name + "同学");
+
         title_name = (TextView) findViewById(R.id.title_name);
-        title_right_image= findViewById(R.id.title_right_image);
+        title_right_image = findViewById(R.id.title_right_image);
         findViewById(R.id.title_back).setVisibility(View.GONE);
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         bottomNavigationBar
@@ -86,6 +76,71 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
         onTabSelected(0);
         mainPre = new MainPreImp(this);
 
+        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
+        if (!SharedPreferencesUtil.getBooleanData(mContext, "isNickname", false)) {
+            Observable.create(new Observable.OnSubscribe<Boolean>() {
+                @Override
+                public void call(Subscriber<? super Boolean> subscriber) {
+                    subscriber.onNext(EMClient.getInstance().updateCurrentUserNick(name));
+
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Boolean>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(Boolean aBoolean) {
+                            SharedPreferencesUtil.saveBooleanData(mContext, "isNickname", aBoolean);
+                            if (aBoolean.booleanValue()) {
+                                LogUtils.i(mContext, EMClient.getInstance().getCurrentUser());
+
+                            }
+                        }
+                    });
+        }
+
+        EMClient.getInstance().contactManager().setContactListener(new EMContactListener() {
+
+            @Override
+            public void onContactAgreed(String username) {
+                //好友请求被同意
+                ToastUtils.showShort(mContext, "好友请求被同意:" + username);
+            }
+
+            @Override
+            public void onContactRefused(String username) {
+                //好友请求被拒绝
+                ToastUtils.showShort(mContext, "好友请求被拒绝:" + username);
+            }
+
+            @Override
+            public void onContactInvited(String username, String reason) {
+                //收到好友邀请
+                ToastUtils.showShort(mContext, "到好友邀请:" + username + '=' + reason);
+            }
+
+            @Override
+            public void onContactDeleted(String username) {
+                //被删除时回调此方法
+                ToastUtils.showShort(mContext, "被删除:" + username);
+            }
+
+
+            @Override
+            public void onContactAdded(String username) {
+                //增加了联系人时回调此方法
+                ToastUtils.showShort(mContext, "增加了联系人:" + username);
+            }
+        });
     }
 
 
@@ -200,8 +255,8 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
     }
 
     @Override
-    public void updateDialog(String s) {
-        new AlertView(s, "更新后获取最新的视频课程", "暂不更新", null, new String[]{"开始更新"}, mContext, AlertView.Style.Alert, new OnItemClickListener() {
+    public void updateDialog(String s, String updateString) {
+        new AlertView(s, updateString, "暂不更新", null, new String[]{"开始更新"}, mContext, AlertView.Style.Alert, new OnItemClickListener() {
             @Override
             public void onItemClick(Object o, int position) {
                 if (position == 0) {
@@ -211,11 +266,52 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
         }).show();
     }
 
+    @Override
+    public void updateCourse() {
+        if (videoFragment != null) {
+            videoFragment.setMainView(this);
+        }
+    }
+
     /**
      * 缓存按钮
+     *
      * @param view
      */
     public void toDownload(View view) {
 
+    }
+
+
+    private class MyConnectionListener implements EMConnectionListener {
+        @Override
+        public void onConnected() {
+        }
+
+        @Override
+        public void onDisconnected(final int error) {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (error == EMError.USER_REMOVED) {
+                        ToastUtils.showLong(mContext, "帐号已经被移除");
+                        // 显示帐号已经被移除
+                    } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                        // 显示帐号在其他设备登录
+                        ToastUtils.showLong(mContext, "帐号在其他设备登录");
+                    } else {
+                        if (NetUtils.hasNetwork(mContext)) {
+                            ToastUtils.showLong(mContext, "连接不到聊天服务器");
+                        }
+                        //连接不到聊天服务器
+                        else {
+                            ToastUtils.showLong(mContext, "当前网络不可用，请检查网络设置");
+                        }
+                        //当前网络不可用，请检查网络设置
+                    }
+                }
+            });
+        }
     }
 }

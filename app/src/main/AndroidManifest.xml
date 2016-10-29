@@ -11,7 +11,19 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.GET_TASKS"  />
+
+    <!--环信-->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+
 
     <application
         android:name=".BeidaApplication"
@@ -42,22 +54,38 @@
             android:name=".main.MainActivity"
             android:configChanges="orientation|screenSize">
 
+
+        </activity>
+        <activity android:name=".video.VideoListActivity" />
+        <activity android:name=".WelcomeActivity" android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".video.VideoListActivity" />
-        <activity android:name=".WelcomeActivity" android:theme="@style/FullScreen">
 
-        </activity>
         <meta-data android:value="b9e98b3e0431d38dd2f72353429afb7b" android:name="BUG_HD_SDK_GENERAL_KEY" />
-        <meta-data android:value="581194de1061d24a13002d77" android:name="UMENG_APPKEY"></meta-data>
-        <meta-data android:value="QQ" android:name="UMENG_CHANNEL"/>
+        <meta-data android:name="TD_APP_ID" android:value="334836D7C79148F2ABE6078B09FF97BC" />
+        <meta-data android:name="TD_CHANNEL_ID" android:value="QQ" />
 
-        <meta-data android:name="334836D7C79148F2ABE6078B09FF97BC" android:value="Your_app_id" />
-        <meta-data android:name="QQ" android:value="Your_channel_id" />
+
+        <!--环信-->
+        <meta-data android:name="EASEMOB_APPKEY"  android:value="1189161028178774#beida" />
+        <!-- 声明SDK所需的service SDK核心功能-->
+        <service android:name="com.hyphenate.chat.EMChatService" android:exported="true"/>
+        <!-- 声明SDK所需的receiver -->
+        <receiver android:name="com.hyphenate.chat.EMMonitorReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+            <!-- 可选filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

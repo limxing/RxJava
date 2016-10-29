@@ -1,8 +1,12 @@
 package me.leefeng.rxjava;
 
 import android.content.Intent;
+import android.util.Log;
 import android.widget.TextView;
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 
@@ -18,11 +22,15 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 /**
  * Created by limxing on 2016/10/27.
  */
 
 public class WelcomeActivity extends BeidaActivity {
+
+    private String username;
+    private String password;
 
     @Override
     protected void initView() {
@@ -35,8 +43,9 @@ public class WelcomeActivity extends BeidaActivity {
 
                 }
                 if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
-                    goLogin(SharedPreferencesUtil.getStringData(mContext, "username", ""),
-                            SharedPreferencesUtil.getStringData(mContext, "password", ""));
+                    username = SharedPreferencesUtil.getStringData(mContext, "username", "");
+                    password = SharedPreferencesUtil.getStringData(mContext, "password", "");
+                    goLogin();
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -56,10 +65,55 @@ public class WelcomeActivity extends BeidaActivity {
         return R.layout.activity_welcome;
     }
 
-    private void goLogin(final String id, final String pw) {
+    private void goLogin() {
+        EMClient.getInstance().login(username, username, new EMCallBack() {//回调
+            @Override
+            public void onSuccess() {
+                EMClient.getInstance().groupManager().loadAllGroups();
+                EMClient.getInstance().chatManager().loadAllConversations();
+                Log.d("main", "登录聊天服务器成功！");
+                goBeida();
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+
+            @Override
+            public void onError(int code, String message) {
+                Log.d("onError:", "登录聊天服务器失败！" + code);
+                if (code == 204) {
+                    registUser();
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 自动注册
+     *
+     * @param
+     */
+    private void registUser() {
+        try {
+            EMClient.getInstance().createAccount(username, username);//同步方法
+            goBeida();
+        } catch (HyphenateException e) {
+            e.printStackTrace();
+            LogUtils.i(this, "注册失败：" + e.getErrorCode());
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
+    private void goBeida() {
         RequestBody formBody = new FormBody.Builder()
-                .add("myID", id)
-                .add("myPW", pw)
+                .add("myID", username)
+                .add("myPW", password)
                 .add("usersf", "1")
                 .build();
 
@@ -94,20 +148,24 @@ public class WelcomeActivity extends BeidaActivity {
                 current = "学&nbsp;&nbsp;&nbsp;号</strong>：";
                 i = str.indexOf(current);
                 final String xh = str.substring(i + current.length(), i + current.length() + 14).trim();
+                i = str.indexOf("已经获得");
+                int j = str.indexOf("</td>", i);
 
+                final String xf=str.substring(i,j);
 
-                LogUtils.i("pic:" + pic + "=bmh:" + bmh);
+                LogUtils.i("pic:" + pic + "=bmh:" + bmh+"=xf="+xf);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         svProgressHUD.dismissImmediately();
-                        SharedPreferencesUtil.saveStringData(mContext, "username", id);
-                        SharedPreferencesUtil.saveStringData(mContext, "password", pw);
+//                        SharedPreferencesUtil.saveStringData(mContext, "username", id);
+//                        SharedPreferencesUtil.saveStringData(mContext, "password", pw);
                         Intent intent = new Intent(mContext, me.leefeng.rxjava.main.MainActivity.class);
                         intent.putExtra("name", name);
                         intent.putExtra("pic", pic);
                         intent.putExtra("bmh", bmh);
                         intent.putExtra("xh", xh);
+                        intent.putExtra("xf", xf);
                         startActivity(intent);
                         finish();
                     }

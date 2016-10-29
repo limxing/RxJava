@@ -35,12 +35,12 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
 
     protected static Timer DISMISS_CONTROL_VIEW_TIMER;
 
-    public ImageView   backButton;
+    public ImageView backButton;
     public ProgressBar bottomProgressBar, loadingProgressBar;
-    public TextView          titleTextView;
-    public ImageView         thumbImageView;
-    public ImageView         coverImageView;
-    public ImageView         tinyBackImageView;
+    public TextView titleTextView;
+    public ImageView thumbImageView;
+    public ImageView coverImageView;
+    public ImageView tinyBackImageView;
     public JCResizeImageView cacheImageView;
 
     protected static Bitmap pauseSwitchCoverBitmap = null;
@@ -48,6 +48,7 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     protected boolean textureSizeChanged;
 
     protected DismissControlViewTimerTask mDismissControlViewTimerTask;
+
 
 
     public JCVideoPlayerStandard(Context context) {
@@ -137,6 +138,9 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
                 changeUiToPlayingBufferingShow();
                 break;
         }
+    }
+    public void setJcPlayerListener(JCPlayerListener jcPlayerListener) {
+        this.jcPlayerListener = jcPlayerListener;
     }
 
     @Override
@@ -678,11 +682,11 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
         cacheImageView.setImageBitmap(null);
     }
 
-    protected Dialog      mProgressDialog;
+    protected Dialog mProgressDialog;
     protected ProgressBar mDialogProgressBar;
-    protected TextView    mDialogSeekTime;
-    protected TextView    mDialogTotalTime;
-    protected ImageView   mDialogIcon;
+    protected TextView mDialogSeekTime;
+    protected TextView mDialogTotalTime;
+    protected ImageView mDialogIcon;
 
     @Override
     public void showProgressDialog(float deltaX, String seekTime, int seekTimePosition, String totalTime, int totalTimeDuration) {
@@ -728,7 +732,7 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
     }
 
 
-    protected Dialog      mVolumeDialog;
+    protected Dialog mVolumeDialog;
     protected ProgressBar mDialogVolumeProgressBar;
 
     @Override
@@ -803,4 +807,6 @@ public class JCVideoPlayerStandard extends JCVideoPlayer {
             }
         }
     }
+
+
 }

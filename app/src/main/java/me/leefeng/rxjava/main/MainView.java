@@ -13,5 +13,7 @@ public interface MainView {
 
     void showSuccessWithStatus(String s);
 
-    void updateDialog(String s);
+    void updateDialog(String s, String updateString);
+
+    void updateCourse();
 }

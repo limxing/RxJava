@@ -26,22 +26,25 @@
 
             <TextView
                 android:id="@+id/title_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:layout_marginLeft="80dp"
+                android:gravity="center"
                 android:text="标题"
+                android:singleLine="true"
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/title_right_image"
-                android:paddingRight="20dp"
-                android:visibility="gone"
-                android:onClick="toDownload"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/download" />
+                android:onClick="toDownload"
+                android:paddingRight="20dp"
+                android:src="@drawable/download"
+                android:visibility="gone" />
         </RelativeLayout>
 
 

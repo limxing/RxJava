@@ -55,3 +55,6 @@ public void *(***);
 }
 -keep class com.talkingdata.sdk.TalkingDataSDK {public *;}
 -keep class com.apptalkingdata.** {*;}
+#环信
+-keep class com.hyphenate.** {*;}
+-dontwarn  com.hyphenate.**
