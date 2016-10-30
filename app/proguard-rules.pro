@@ -15,6 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep class me.leefeng.rxjava.main.Course { *; }
+-keep class me.leefeng.rxjava.main.Course$* { *; }
 -dontwarn com.alibaba.fastjson.**
 -keep class com.alibaba.fastjson.** { *; }
 #-libraryjars libs/fastjson-1.2.20.jar
@@ -58,3 +60,7 @@ public void *(***);
 #环信
 -keep class com.hyphenate.** {*;}
 -dontwarn  com.hyphenate.**
+-dontwarn org.apache.http.**
+-keep class org.apache.http.** { *;}
+-dontwarn android.net.http.**
+-keep class android.net.http.** { *;}

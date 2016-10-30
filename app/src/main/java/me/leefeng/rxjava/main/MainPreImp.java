@@ -3,6 +3,7 @@ package me.leefeng.rxjava.main;
 import android.app.Activity;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.limxing.library.SVProgressHUD.SVProgressHUD;
 import com.limxing.library.utils.IOUtils;
 
@@ -41,7 +42,7 @@ public class MainPreImp implements MainPre {
 
     private void initUpdata() {
         couseFile = new File(((Activity) mainView).getCacheDir(), course);
-         mainApi = new Retrofit.Builder()
+        mainApi = new Retrofit.Builder()
                 .client(BeidaApplication.okHttpClient)
                 .baseUrl("http://leefeng.me")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -57,8 +58,9 @@ public class MainPreImp implements MainPre {
                         public Integer call(ResponseBody responseBody) {
                             Integer integer = null;
                             try {
-                                integer = JSON.parseObject(responseBody.string()).getIntValue("course");
-                                updateString = JSON.parseObject(responseBody.string()).getString("value");
+                                JSONObject obj = JSON.parseObject(responseBody.string());
+                                integer = obj.getIntValue("course");
+                                updateString = obj.getString("value");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -93,7 +95,7 @@ public class MainPreImp implements MainPre {
                         @Override
                         public void onNext(Boolean aBoolean) {
                             if (aBoolean != null && !aBoolean.booleanValue()) {
-                                mainView.updateDialog("课程有更新",updateString);
+                                mainView.updateDialog("课程有更新", updateString);
                             } else {
 
                             }
