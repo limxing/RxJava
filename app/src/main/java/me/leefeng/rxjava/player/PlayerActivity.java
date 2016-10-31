@@ -296,8 +296,9 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
             }
         }).setTitle(playerItemBeanList.get(0).getName())//设置视频的titleName
+              .setCoverImage(R.drawable.default_player)
                 .play(url +
-                        playerItemBeanList.get(0).getUrl() + "-300K.mp4?wsiphost=local");//开始播放视频
+                        playerItemBeanList.get(0).getUrl() + "-300K.mp4?wsiphost=local",true);//开始播放视频
     }
 
 
