@@ -64,3 +64,8 @@ public void *(***);
 -keep class org.apache.http.** { *;}
 -dontwarn android.net.http.**
 -keep class android.net.http.** { *;}
+
+-dontwarn com.superplayer.library.**
+-keep class com.superplayer.library.** { *;}
+-dontwarn tv.danmaku.ijk.media.player.**
+-keep class tv.danmaku.ijk.media.player.** { *;}

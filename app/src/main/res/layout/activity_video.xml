@@ -18,27 +18,32 @@
     <!--android:id="@+id/evp"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content" />-->
-    <FrameLayout
-        android:id="@+id/video_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="205dp"
-        android:background="@android:color/black">
+    <!--<FrameLayout-->
+        <!--android:id="@+id/video_layout"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="205dp"-->
+        <!--android:background="@android:color/black">-->
 
-        <com.universalvideoview.UniversalVideoView
-            android:id="@+id/videoView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            app:uvv_autoRotation="true"
-            app:uvv_fitXY="false" />
+        <!--<com.universalvideoview.UniversalVideoView-->
+            <!--android:id="@+id/videoView"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--app:uvv_autoRotation="true"-->
+            <!--app:uvv_fitXY="false" />-->
 
-        <com.universalvideoview.UniversalMediaController
-            android:id="@+id/media_controller"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            app:uvv_scalable="true" />
+        <!--<com.universalvideoview.UniversalMediaController-->
+            <!--android:id="@+id/media_controller"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--app:uvv_scalable="true" />-->
 
-    </FrameLayout>
+    <!--</FrameLayout>-->
+
+    <com.superplayer.library.SuperPlayer
+        android:id="@+id/view_super_player"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"></com.superplayer.library.SuperPlayer>
 
     <ListView
         android:id="@+id/player_listview"
