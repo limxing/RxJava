@@ -88,10 +88,10 @@ public class MainPreImp implements MainPre {
 
                         @Override
                         public void onNext(Version version) {
-                            version.setCourse(2);
-                            version.setTitle("课程有更新");
-                            version.setValue("添加了毛概");
-                            version.setUrl("http://www.leefeng.me/download/beidacourse1.1.apk");
+//                            version.setCourse(2);
+//                            version.setTitle("课程有更新");
+//                            version.setValue("添加了毛概");
+//                            version.setUrl("http://www.leefeng.me/download/beidacourse1.1.apk");
                             try {
                                 if (version.getVersion() > ((Activity) mainView).getPackageManager().
                                         getPackageInfo(((Activity) mainView).getPackageName(), 0).versionCode) {

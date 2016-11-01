@@ -36,6 +36,15 @@ public class VideoListActivity extends BeidaSwipeActivity implements AdapterView
         ListView video_list_listview = (ListView) findViewById(R.id.video_list_listview);
         video_list_listview.setAdapter(new VideoListAdapter(course.getCatelogue()));
         video_list_listview.setOnItemClickListener(this);
+        findViewById(R.id.title_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+//        SwipeBackHelper.getCurrentPage(this)
+//                .setSwipeBackEnable(false)
+//                .setSwipeBackEnable(true);
     }
 
     @Override

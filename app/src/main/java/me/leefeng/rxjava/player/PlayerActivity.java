@@ -30,15 +30,12 @@ import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
-import nz.co.delacour.exposurevideoplayer.ExposureVideoPlayer;
 
 /**
  * Created by limxing on 2016/10/26.
  */
 
 public class PlayerActivity extends BeidaSwipeActivity implements AdapterView.OnItemClickListener {
-    //    private JCVideoPlayerStandard player;
-    private ExposureVideoPlayer evp;
     private ArrayList<PlayerItemBean> playerItemBeanList;
     private PlayerAdapter adapter;
     private int current;
@@ -50,10 +47,6 @@ public class PlayerActivity extends BeidaSwipeActivity implements AdapterView.On
     private String url;
     private SuperPlayer player;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     protected void initView() {
@@ -98,6 +91,16 @@ public class PlayerActivity extends BeidaSwipeActivity implements AdapterView.On
         player_listview.setOnItemClickListener(this);
 //        player.startPlayLogic();
         initPlayer(list);
+
+        findViewById(R.id.title_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+//        SwipeBackHelper.getCurrentPage(this)
+//                .setSwipeBackEnable(false)
+//                .setSwipeBackEnable(true);
 
     }
 

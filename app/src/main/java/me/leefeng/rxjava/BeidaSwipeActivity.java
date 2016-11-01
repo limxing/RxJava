@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.NoTitleBar.SystemBarTintManager;
 import com.limxing.library.SVProgressHUD.SVProgressHUD;
 import com.limxing.library.SwipeBack.SwipeBackActivity;
@@ -17,16 +18,23 @@ import com.limxing.library.SwipeBack.SwipeBackLayout;
  * Created by limxing on 2016/10/26.
  */
 
-public abstract class BeidaSwipeActivity extends SwipeBackActivity {
+public abstract class BeidaSwipeActivity extends AppCompatActivity {
     protected SVProgressHUD svProgressHUD;
     protected BeidaSwipeActivity mContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        swipebackhelper功能实现
+        SwipeBackHelper.onCreate(this);
+        SwipeBackHelper.getCurrentPage(this)
+                .setSwipeBackEnable(true)
+                .setSwipeSensitivity(0.5f)
+                .setSwipeRelateEnable(true)
+                .setSwipeRelateOffset(300);
+//        设置顶部状态栏
         SystemBarTintManager.initSystemBar(this);
         setContentView(getView());
-        setDragEdge(SwipeBackLayout.DragEdge.LEFT);
         mContext = this;
         svProgressHUD = new SVProgressHUD(this);
 
@@ -60,5 +68,19 @@ public abstract class BeidaSwipeActivity extends SwipeBackActivity {
     protected void onPause() {
         super.onPause();
 //        MobclickAgent.onPause(mContext);
+    }
+
+
+    //    swipebackhelper功能实现
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        SwipeBackHelper.onPostCreate(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SwipeBackHelper.onDestroy(this);
     }
 }

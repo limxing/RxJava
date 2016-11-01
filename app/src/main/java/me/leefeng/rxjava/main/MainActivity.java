@@ -15,6 +15,7 @@ import com.hyphenate.EMContactListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.util.NetUtils;
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.ToastUtils;
@@ -23,6 +24,7 @@ import com.limxing.publicc.alertview.OnItemClickListener;
 
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaData;
+import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.main.bean.Version;
 import rx.Observable;
@@ -35,7 +37,7 @@ import rx.schedulers.Schedulers;
  * Created by limxing on 2016/10/26.
  */
 
-public class MainActivity extends BeidaActivity implements MainView, BottomNavigationBar.OnTabSelectedListener {
+public class MainActivity extends BeidaSwipeActivity implements MainView, BottomNavigationBar.OnTabSelectedListener {
 
     private HomeFragment homeFragment;
     private VideoFragment videoFragment;
@@ -52,6 +54,11 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
 
     @Override
     protected void initView() {
+//        设置主界面不能够被滑动
+        SwipeBackHelper.getCurrentPage(this)
+                .setSwipeBackEnable(false);
+        SwipeBackHelper.getCurrentPage(this).setDisallowInterceptTouchEvent(true);
+
         name = getIntent().getStringExtra("name");
         pic = getIntent().getStringExtra("pic");
         bmh = getIntent().getStringExtra("bmh");

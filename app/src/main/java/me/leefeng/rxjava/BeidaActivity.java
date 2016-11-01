@@ -9,7 +9,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.limxing.library.NoTitleBar.SystemBarTintManager;
 import com.limxing.library.SVProgressHUD.SVProgressHUD;
-import com.umeng.analytics.MobclickAgent;
 
 
 /**

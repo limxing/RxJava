@@ -69,5 +69,6 @@ dependencies {
     compile files('src/main/jniLibs/org.apache.http.legacy.jar')
 
     compile 'me.leefeng:player:1.5.7'
+    compile 'com.jude:swipebackhelper:3.1.2'
 //    compile 'com.github.liuguangqiang.swipeback:library:1.0.2@aar'
 }
