@@ -13,6 +13,7 @@ import java.util.List;
 
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
+import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.main.Course;
 import me.leefeng.rxjava.player.PlayerActivity;
 import me.leefeng.rxjava.R;
@@ -22,7 +23,7 @@ import me.leefeng.rxjava.R;
  * Created by limxing on 2016/10/26.
  */
 
-public class VideoListActivity extends BeidaActivity implements AdapterView.OnItemClickListener {
+public class VideoListActivity extends BeidaSwipeActivity implements AdapterView.OnItemClickListener {
 
     private int courseIndex;
 

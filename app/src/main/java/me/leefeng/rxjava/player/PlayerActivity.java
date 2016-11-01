@@ -28,6 +28,7 @@ import java.util.List;
 
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
+import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
 import nz.co.delacour.exposurevideoplayer.ExposureVideoPlayer;
 
@@ -35,7 +36,7 @@ import nz.co.delacour.exposurevideoplayer.ExposureVideoPlayer;
  * Created by limxing on 2016/10/26.
  */
 
-public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemClickListener {
+public class PlayerActivity extends BeidaSwipeActivity implements AdapterView.OnItemClickListener {
     //    private JCVideoPlayerStandard player;
     private ExposureVideoPlayer evp;
     private ArrayList<PlayerItemBean> playerItemBeanList;
@@ -243,10 +244,9 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
     }
 
     private void initPlayer(List<String> list) {
-        setVolumeControlStream(AudioManager.STREAM_MUSIC); //让音量键固定为媒体音量控制
         player = (SuperPlayer) findViewById(R.id.view_super_player);
-        player.setScaleType(SuperPlayer.SCALETYPE_FITXY);
-        player.setPlayerWH(0, player.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
+//        player.setScaleType(SuperPlayer.SCALETYPE_FITPARENT);
+//        player.setPlayerWH(0, player.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
 
         player.setNetChangeListener(true)//设置监听手机网络的变化
 //                .setOnNetChangeListener(this)//实现网络变化的回调
@@ -296,9 +296,14 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
 
             }
         }).setTitle(playerItemBeanList.get(0).getName())//设置视频的titleName
-              .setCoverImage(R.drawable.default_player)
+                .setCoverImage(R.drawable.default_player)
                 .play(url +
-                        playerItemBeanList.get(0).getUrl() + "-300K.mp4?wsiphost=local",true);//开始播放视频
+                        playerItemBeanList.get(0).getUrl() + "-300K.mp4?wsiphost=local", true);//开始播放视频
+
+        player.setScaleType(SuperPlayer.SCALETYPE_FITPARENT);
+        player.setPlayerWH(0, player.getMeasuredHeight());//设置竖屏的时候屏幕的高度，如果不设置会切换后按照16:9的高度重置
+
+
     }
 
 
@@ -312,6 +317,9 @@ public class PlayerActivity extends BeidaActivity implements AdapterView.OnItemC
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+//        if (player != null) {
+//            player.onConfigurationChanged(newConfig);
+//        }
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             video_title.setVisibility(View.VISIBLE);
         } else {

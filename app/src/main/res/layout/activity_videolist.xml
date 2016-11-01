@@ -7,6 +7,7 @@
     <include layout="@layout/activity_title"></include>
 
     <ListView
+        android:background="#fff"
         android:id="@+id/video_list_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -2,6 +2,8 @@ package me.leefeng.rxjava.main;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -20,7 +22,9 @@ import com.limxing.publicc.alertview.AlertView;
 import com.limxing.publicc.alertview.OnItemClickListener;
 
 import me.leefeng.rxjava.BeidaActivity;
+import me.leefeng.rxjava.BeidaData;
 import me.leefeng.rxjava.R;
+import me.leefeng.rxjava.main.bean.Version;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -271,6 +275,29 @@ public class MainActivity extends BeidaActivity implements MainView, BottomNavig
         if (videoFragment != null) {
             videoFragment.setMainView(this);
         }
+    }
+
+    @Override
+    public void updateApp(final Version version) {
+        new AlertView(version.getTitle(), version.getValue(), "暂不更新", null, new String[]{"开始更新"}, mContext, AlertView.Style.Alert, new OnItemClickListener() {
+            @Override
+            public void onItemClick(Object o, int position) {
+                if (position == 0) {
+                    mainPre.updateAppThread(version);
+                }
+            }
+        }).show();
+    }
+
+    @Override
+    public void openApk() {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(BeidaData.FILE_DOWN_APK),
+                "application/vnd.android.package-archive");
+        startActivity(intent);
+        finish();
     }
 
     /**
