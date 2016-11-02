@@ -24,6 +24,7 @@ import java.util.List;
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.R;
+import me.leefeng.rxjava.newplay.NewPlayerActivity;
 import me.leefeng.rxjava.video.VideoListActivity;
 import rx.Observable;
 import rx.Subscriber;
@@ -122,7 +123,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener, Ada
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Intent intent = new Intent(getActivity(), VideoListActivity.class);
+        Intent intent = new Intent(getActivity(), NewPlayerActivity.class);
         intent.putExtra("course", i);
         startActivity(intent);
 
