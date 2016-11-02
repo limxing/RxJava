@@ -37,9 +37,6 @@ public class NewPlayerActivity extends BeidaSwipeActivity {
         course = BeidaApplication.cList.get(courseIndex);
 
 
-
-
-
         if (course.getCatelogue().size() == 0) {
             ToastUtils.showShort(this, "本单元暂时没视频");
             return;
@@ -61,6 +58,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity {
         newplayer_recycleview.setAdapter(mAdapter);
         newplayer_recycleview.setLayoutManager(new LinearLayoutManager(this));
         newplayer_recycleview.addItemDecoration(new StickyRecyclerHeadersDecoration(mAdapter));
+
         initPlayer();
         newplayer_recycleview.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -82,11 +80,11 @@ public class NewPlayerActivity extends BeidaSwipeActivity {
                         playerItemBeanList.get(position).getUrl() + "-300K.mp4?wsiphost=local");
             }
         }));
-        url =course.getVideos().get((int) mAdapter.getHeaderId(current)).getUrl();
 
     }
 
     private void initPlayer() {
+        url =course.getVideos().get((int) mAdapter.getHeaderId(current)).getUrl();
         int position = SharedPreferencesUtil.getIntData(this, course.getId() + "play", 0);
         player = (SuperPlayer) findViewById(R.id.newplay_player);
         player.setNetChangeListener(true)//设置监听手机网络的变化
