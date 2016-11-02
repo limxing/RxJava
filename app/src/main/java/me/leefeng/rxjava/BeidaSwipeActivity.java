@@ -28,6 +28,7 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
 //        swipebackhelper功能实现
         SwipeBackHelper.onCreate(this);
         SwipeBackHelper.getCurrentPage(this)
+                .setClosePercent(0.5f)
                 .setSwipeBackEnable(true)
                 .setSwipeSensitivity(0.5f)
                 .setSwipeRelateEnable(true)

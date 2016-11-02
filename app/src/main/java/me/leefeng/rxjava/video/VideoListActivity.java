@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.jude.swipbackhelper.SwipeBackHelper;
 
 import java.util.List;
 
@@ -42,9 +43,6 @@ public class VideoListActivity extends BeidaSwipeActivity implements AdapterView
                 finish();
             }
         });
-//        SwipeBackHelper.getCurrentPage(this)
-//                .setSwipeBackEnable(false)
-//                .setSwipeBackEnable(true);
     }
 
     @Override

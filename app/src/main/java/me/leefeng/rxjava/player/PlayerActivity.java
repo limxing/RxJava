@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.utils.DisplayUtil;
 import com.limxing.library.utils.FileUtils;
 import com.limxing.library.utils.ToastUtils;
@@ -98,9 +99,6 @@ public class PlayerActivity extends BeidaSwipeActivity implements AdapterView.On
                 finish();
             }
         });
-//        SwipeBackHelper.getCurrentPage(this)
-//                .setSwipeBackEnable(false)
-//                .setSwipeBackEnable(true);
 
     }
 
@@ -325,8 +323,10 @@ public class PlayerActivity extends BeidaSwipeActivity implements AdapterView.On
 //        }
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             video_title.setVisibility(View.VISIBLE);
+            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
         } else {
             video_title.setVisibility(View.GONE);
+            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
         }
     }
 }
