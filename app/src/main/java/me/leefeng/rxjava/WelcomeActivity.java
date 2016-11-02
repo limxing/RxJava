@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.Permission.CheckPermListener;
 import com.limxing.library.Permission.EasyPermissions;
 import com.limxing.library.utils.LogUtils;

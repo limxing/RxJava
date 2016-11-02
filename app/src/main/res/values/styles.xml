@@ -8,8 +8,17 @@
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
+    <style name="AppSlideRight" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>
 
-    <style name="FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
+    </style>
+    <style name="AppFullScreen" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="SwipeFullScreen" parent="Theme.Swipe.Back">
         <!-- Customize your theme here. -->
         <item name="android:windowFullscreen">true</item>
     </style>
@@ -18,6 +27,7 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>
+
     </style>
 
 </resources>

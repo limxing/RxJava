@@ -42,7 +42,7 @@
         <activity
             android:name=".player.PlayerActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.Swipe.Back">
+            android:theme="@style/SwipeFullScreen">
 
         </activity>
 
@@ -53,6 +53,7 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
+            android:theme="@style/AppSlideRight"
             android:configChanges="orientation|screenSize">
 
 
@@ -62,7 +63,7 @@
             android:theme="@style/Theme.Swipe.Back" />
         <activity
             android:name=".WelcomeActivity"
-            android:theme="@style/FullScreen">
+            android:theme="@style/AppFullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
