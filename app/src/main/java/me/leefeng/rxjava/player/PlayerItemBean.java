@@ -10,6 +10,7 @@ public class PlayerItemBean {
     private String name;
     private boolean isPlaying;
     private String url;
+    private boolean isChecked;
 
     public PlayerItemBean() {
     }
@@ -53,5 +54,13 @@ public class PlayerItemBean {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

@@ -27,6 +27,10 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
     private final ArrayList<PlayerItemBean> playerItemBeanList;
     private Drawable drawable;
     private Drawable drawable_pre;
+    private boolean isDownloadController;
+    private OnItemClickListener listener;
+    private Drawable check_normal;
+    private Drawable checked;
 
 
     public PlayerListAdapter(List<String> catelogue, ArrayList<PlayerItemBean> playerItemBeanList) {
@@ -52,12 +56,12 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
 
     @Override
     public MasonryView onCreateHeaderViewHolder(ViewGroup parent) {
-        int f = (int) parent.getResources().getDisplayMetrics().density;
+//        View text = View.inflate(parent.getContext(), R.layout.textview_item, null);
         TextView text = new TextView(parent.getContext());
         text.setWidth(parent.getResources().getDisplayMetrics().widthPixels);
-        text.setBackgroundColor(Color.WHITE);
-        text.setTextSize(6 * f);
-        text.setPadding(10 * f, 10 * f, 0, 5 * f);
+        text.setBackgroundColor(Color.parseColor("#E0E0E0"));
+        text.setTextSize(16);
+        text.setPadding(25, 20, 0, 10);
         text.setSingleLine();
         return new MasonryView(text);
     }
@@ -65,35 +69,65 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
 
     @Override
     public MasonryView onCreateViewHolder(ViewGroup parent, int viewType) {
-        int f = (int) parent.getResources().getDisplayMetrics().density;
+
+//        View text = View.inflate(parent.getContext(), R.layout.textview_item, null);
         TextView text = new TextView(parent.getContext());
         if (drawable == null) {
             drawable = parent.getResources().getDrawable(R.drawable.play_normal);
             drawable_pre = parent.getResources().getDrawable(R.drawable.play_pressed);
             drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
             drawable_pre.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+            check_normal = parent.getResources().getDrawable(R.drawable.check_normal);
+            checked = parent.getResources().getDrawable(R.drawable.checked);
+            check_normal.setBounds(0, 0, check_normal.getMinimumWidth(), check_normal.getMinimumHeight());
+            checked.setBounds(0, 0, check_normal.getMinimumWidth(), check_normal.getMinimumHeight());
         }
-
-        text.setCompoundDrawablePadding(8 * f);
-        text.setGravity(Gravity.CENTER);
-        text.setCompoundDrawables(drawable, null, null, null);
-        text.setBackgroundColor(Color.WHITE);
-        text.setTextSize(5 * f);
-        text.setPadding(25 * f, 10 * f, 0, 20 * f);
+        text.setWidth(parent.getResources().getDisplayMetrics().widthPixels);
+        text.setCompoundDrawablePadding(16);
+        text.setGravity(Gravity.CENTER_VERTICAL);
+        if (isDownloadController) {
+            text.setCompoundDrawables(check_normal, null, null, null);
+        } else {
+            text.setCompoundDrawables(drawable, null, null, null);
+        }
+        text.setFocusable(true);
+        text.setBackgroundResource(R.drawable.textview_bac);
+        text.setTextSize(14);
+        text.setPadding(60, 40, 0, 40);
         text.setSingleLine();
+
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onItemClick(view, (Integer) view.getTag());
+                }
+            }
+        });
         return new MasonryView(text);
     }
 
     @Override
     public void onBindViewHolder(MasonryView holder, int position) {
-       PlayerItemBean playerItemBean= playerItemBeanList.get(position);
+        PlayerItemBean playerItemBean = playerItemBeanList.get(position);
         holder.textView.setText(playerItemBean.getName());
-        if (playerItemBean.isPlaying()){
-            holder.textView.setTextColor(Color.parseColor("#b21117"));
-            holder.textView.setCompoundDrawables(drawable_pre,null,null,null);
-        }else{
+        holder.textView.setTag(position);
+        if (isDownloadController) {
             holder.textView.setTextColor(Color.BLACK);
-            holder.textView.setCompoundDrawables(drawable,null,null,null);
+            if (playerItemBean.isChecked()) {
+                holder.textView.setCompoundDrawables(checked, null, null, null);
+            } else {
+                holder.textView.setCompoundDrawables(check_normal, null, null, null);
+
+            }
+            return;
+        }
+        if (playerItemBean.isPlaying()) {
+            holder.textView.setTextColor(Color.parseColor("#b21117"));
+            holder.textView.setCompoundDrawables(drawable_pre, null, null, null);
+        } else {
+            holder.textView.setTextColor(Color.BLACK);
+            holder.textView.setCompoundDrawables(drawable, null, null, null);
         }
 
     }
@@ -109,11 +143,23 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
         TextView textView;
 
 
-
         public MasonryView(View itemView) {
             super(itemView);
+//            textView = (TextView) itemView.findViewById(R.id.textview_item_tv);
             textView = (TextView) itemView;
         }
 
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public void setDownloadController(boolean downloadController) {
+        isDownloadController = downloadController;
     }
 }
