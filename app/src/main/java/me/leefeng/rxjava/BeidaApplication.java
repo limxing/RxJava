@@ -3,6 +3,7 @@ package me.leefeng.rxjava;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import im.fir.sdk.FIR;
+import me.leefeng.rxjava.download.DownLoadService;
 import me.leefeng.rxjava.main.Course;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -40,6 +42,7 @@ public class BeidaApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        startService(new Intent(this, DownLoadService.class));
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(new CookieJar() {
             private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();

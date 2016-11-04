@@ -8,14 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.limxing.library.utils.DisplayUtil;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import me.leefeng.rxjava.R;
-import me.leefeng.rxjava.player.PlayerItemBean;
+import me.leefeng.rxjava.download.DownLoadManager;
+import me.leefeng.rxjava.download.DownLoadService;
+import me.leefeng.rxjava.download.TaskInfo;
 
 /**
  * Created by limxing on 2016/11/2.
@@ -25,6 +27,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
         implements StickyRecyclerHeadersAdapter<PlayerListAdapter.MasonryView> {
     private final List<String> catelogue;
     private final ArrayList<PlayerItemBean> playerItemBeanList;
+    private ArrayList<String> downloadList;
     private Drawable drawable;
     private Drawable drawable_pre;
     private boolean isDownloadController;
@@ -36,6 +39,11 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
     public PlayerListAdapter(List<String> catelogue, ArrayList<PlayerItemBean> playerItemBeanList) {
         this.catelogue = catelogue;
         this.playerItemBeanList = playerItemBeanList;
+          /*获取下载管理器*/
+        DownLoadManager downLoadManager = DownLoadService.getDownLoadManager();
+        /*断点续传需要服务器的支持，设置该项时要先确保服务器支持断点续传功能*/
+        downLoadManager.setSupportBreakpoint(true);
+        downloadList = downLoadManager.getAllTaskID();
 
     }
 
@@ -112,6 +120,14 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
         PlayerItemBean playerItemBean = playerItemBeanList.get(position);
         holder.textView.setText(playerItemBean.getName());
         holder.textView.setTag(position);
+        //判断是否存在这个下载任务
+        if (isDownloadController&&(downloadList.contains(playerItemBean.getUrl())
+                || new File(playerItemBean.getPath()).exists())) {
+            holder.textView.setTextColor(Color.GRAY);
+            playerItemBean.setChecked(false);
+            holder.textView.setCompoundDrawables(checked, null, null, null);
+            return;
+        }
         if (isDownloadController) {
             holder.textView.setTextColor(Color.BLACK);
             if (playerItemBean.isChecked()) {

@@ -108,6 +108,7 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+        <service android:name=".download.DownLoadService" android:priority = "1000"/>
     </application>
 
 </manifest>

@@ -17,14 +17,23 @@ import com.limxing.library.view.AnimUtils;
 import com.superplayer.library.SuperPlayer;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
+import me.leefeng.rxjava.download.DownLoadManager;
+import me.leefeng.rxjava.download.DownLoadService;
+import me.leefeng.rxjava.download.TaskInfo;
 import me.leefeng.rxjava.main.Course;
-import me.leefeng.rxjava.player.PlayerItemBean;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.observers.Observers;
 
 /**
  * Created by limxing on 2016/11/2.
@@ -47,9 +56,11 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
     private View newplayer_down_bottom;
     private int down_bottom_height;
     private TextView newplayer_all;
+    private DownLoadManager downLoadManager;
 
     @Override
     protected void initView() {
+        downLoadManager = DownLoadService.getDownLoadManager();
         newplay_title = findViewById(R.id.newplay_title);
         newplay_title.measure(0, 0);
         titleHeight = newplay_title.getMeasuredHeight();
@@ -69,9 +80,11 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
         }
         playerItemBeanList = new ArrayList<PlayerItemBean>();
         for (int i = 0; i < course.getCatelogue().size(); i++) {
+            String caper = course.getCatelogue().get(i);
             List<String> list = course.getVideos().get(i).getValues();
+
             for (String s : list) {
-                playerItemBeanList.add(new PlayerItemBean(s));
+                playerItemBeanList.add(new PlayerItemBean(s, formatUrl(s), course.getId(), caper));
             }
         }
         current = SharedPreferencesUtil.getIntData(this, course.getId(), 0);
@@ -121,8 +134,8 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
 
                 player.stop();
 
-                player.setTitle(playerItemBeanList.get(current).getName()).play(url +
-                        playerItemBeanList.get(position).getUrl() + "-300K.mp4?wsiphost=local");
+                player.setTitle(playerItemBeanList.get(current).getName())
+                        .play(playerItemBeanList.get(current).getUrl());
             }
         });
 
@@ -177,8 +190,8 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 if (current < playerItemBeanList.size()) {
                     url = course.getVideos().get((int) mAdapter.getHeaderId(current)).getUrl();
                     playerItemBeanList.get(current).setPlaying(true);
-                    player.setTitle(playerItemBeanList.get(current).getName()).play(url +
-                            playerItemBeanList.get(current).getUrl() + "-300K.mp4?wsiphost=local");
+                    player.setTitle(playerItemBeanList.get(current).getName())
+                            .play(playerItemBeanList.get(current).getUrl());
                 } else {
                     player.toggleFullScreen();
                 }
@@ -201,9 +214,14 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
 
             }
         }).setTitle(playerItemBeanList.get(current).getName())//设置视频的titleName
-                .setCoverImage(R.drawable.default_player)
-                .setUrl(url + playerItemBeanList.get(current).getUrl() + "-300K.mp4?wsiphost=local")
-                .seekTo(position, true)
+                .setCoverImage(R.drawable.default_player);
+        File file = new File(playerItemBeanList.get(current).getPath());
+        if (file.exists()) {
+            player.setUrl(file.toString());
+        } else {
+            player.setUrl(playerItemBeanList.get(current).getUrl());
+        }
+        player.seekTo(position, true)
                 .play(500);
 
         player.setScaleType(SuperPlayer.SCALETYPE_FITPARENT);
@@ -229,7 +247,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
-        if (player != null&&!isDownloadController) {
+        if (player != null && !isDownloadController) {
             player.onResume();
         }
     }
@@ -368,6 +386,45 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 break;
             case R.id.newplayer_down:
                 findViewById(R.id.title_back).callOnClick();
+                Observable.create(new Observable.OnSubscribe<Integer>() {
+                    @Override
+                    public void call(Subscriber<? super Integer> subscriber) {
+                        int i = 0;
+                        for (PlayerItemBean itemBean : playerItemBeanList) {
+                            if (itemBean.isChecked()) {
+                                //没有下载
+                                TaskInfo info = new TaskInfo();
+                                info.setFileName(itemBean.getName());
+                            /*服务器一般会有个区分不同文件的唯一ID，用以处理文件重名的情况*/
+                                info.setTaskID(itemBean.getUrl());
+                                info.setOnDownloading(true);
+                                downLoadManager.addTask(info.getTaskID(), info.getTaskID(), info.getFileName(), itemBean.getPath());
+                                i++;
+                            }
+                        }
+                        subscriber.onNext(i);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Integer>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(Integer integer) {
+                                if (integer > 0) {
+                                    ToastUtils.showLong(mContext, "新增" + integer + "个下载任务");
+                                } else {
+                                    ToastUtils.showLong(mContext, "没有新增下载任务");
+                                }
+                            }
+                        });
                 break;
             case R.id.newplayer_all:
 
@@ -382,5 +439,34 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 }
                 break;
         }
+    }
+
+
+    /**
+     * 格式化url
+     *
+     * @param name
+     * @return
+     */
+    private String formatUrl(String name) {
+        String u = "C01S00P00";
+        if (name.indexOf(" ") > 0) {
+            String[] s = name.substring(0, name.indexOf(" ")).split("\\.");
+            if (s.length > 0) {
+                u = "C" + String.format("%02d", Integer.parseInt(s[0])) + "S" + String.format("%02d", Integer.parseInt(s[1]));
+                if (s.length > 2) {
+                    u = u + "P" + String.format("%02d", Integer.parseInt(s[2]));
+                } else {
+                    u = u + "P00";
+                }
+            }
+        }
+        String s = name.substring(0, 2);
+        if (s.contains(".")) {
+            s = String.valueOf(s.charAt(0));
+        }
+        int i = Integer.parseInt(s) - 1;
+        u = course.getVideos().get(i).getUrl() + u + "-300K.mp4";
+        return u;
     }
 }

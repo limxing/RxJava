@@ -23,6 +23,7 @@ import java.util.List;
 import me.leefeng.rxjava.login.*;
 import me.leefeng.rxjava.login.LoginActivity;
 import me.leefeng.rxjava.main.*;
+import me.leefeng.rxjava.main.MainActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -92,7 +93,15 @@ public class WelcomeActivity extends BeidaActivity implements
                 EMClient.getInstance().groupManager().loadAllGroups();
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.d("main", "登录聊天服务器成功！");
-                goBeida();
+//                goBeida();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
 
             @Override
