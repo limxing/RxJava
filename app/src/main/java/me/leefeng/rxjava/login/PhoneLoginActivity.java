@@ -40,7 +40,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
         timer = new Timer();
         phone = (MaterialEditText) findViewById(R.id.phone);
         phone_pw = (MaterialEditText) findViewById(R.id.phone_pw);
-        ((TextView)findViewById(R.id.title_name)).setText("手机号码登录");
+        ((TextView) findViewById(R.id.title_name)).setText("手机号码登录");
         EventHandler eh = new EventHandler() {
             @Override
             public void afterEvent(int event, int result, final Object data) {
@@ -62,10 +62,11 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
                     }
                 } else {
                     ((Throwable) data).printStackTrace();
+                    final String message = JSON.parseObject(((Throwable) data).getMessage()).getString("detail");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            svProgressHUD.showErrorWithStatus(((Throwable) data).getMessage());
+                            svProgressHUD.showErrorWithStatus(message);
                             button.setEnabled(true);
                             button.setText("获取验证码");
                             timer.cancel();
@@ -142,7 +143,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
                     }
                 });
             }
-        }, 1000, 1000);
+        }, 100, 1000);
     }
 
     private void registHX(final String username) {
@@ -198,7 +199,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
         SharedPreferencesUtil.saveStringData(mContext, "username", username);
         SharedPreferencesUtil.saveStringData(mContext, "password", username);
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("isPhone",true);
+        intent.putExtra("isPhone", true);
         startActivity(intent);
     }
 

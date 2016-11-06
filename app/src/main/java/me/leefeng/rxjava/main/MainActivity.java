@@ -60,14 +60,15 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         SwipeBackHelper.getCurrentPage(this)
                 .setSwipeBackEnable(false);
         SwipeBackHelper.getCurrentPage(this).setDisallowInterceptTouchEvent(true);
-        isPhone = getIntent().getBooleanExtra("iPhone", false);
+        isPhone = getIntent().getBooleanExtra("isPhone", false);
         name = getIntent().getStringExtra("name");
         pic = getIntent().getStringExtra("pic");
         bmh = getIntent().getStringExtra("bmh");
         xh = getIntent().getStringExtra("xh");
         xf = getIntent().getStringExtra("xf");
-        ToastUtils.showLong(mContext, "欢迎" + name + "同学");
-
+        if (!isPhone) {
+            ToastUtils.showLong(mContext, "欢迎" + name + "同学");
+        }
         title_name = (TextView) findViewById(R.id.title_name);
         title_right_image = findViewById(R.id.title_right_image);
         title_right_image.setOnClickListener(this);
@@ -81,12 +82,12 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 .setMode(BottomNavigationBar.MODE_FIXED);
         if (isPhone) {
             bottomNavigationBar
-                    .addItem(new BottomNavigationItem(R.drawable.chat, "沟通"))
+                    .addItem(new BottomNavigationItem(R.drawable.chat, "课程讨论"))
                     .addItem(new BottomNavigationItem(R.drawable.video, "课程学习")).initialise();
         } else {
             bottomNavigationBar
                     .addItem(new BottomNavigationItem(R.drawable.home, "个人信息"))
-                    .addItem(new BottomNavigationItem(R.drawable.chat, "沟通"))
+                    .addItem(new BottomNavigationItem(R.drawable.chat, "课程讨论"))
                     .addItem(new BottomNavigationItem(R.drawable.video, "课程学习"))
 //                .addItem(new BottomNavigationItem(R.drawable.download, "离线视频"))
                     .initialise();
@@ -198,7 +199,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                     chatFragment = ChatFragment.getInstance(this);
                 }
                 transaction.replace(R.id.tb, chatFragment);
-                title_name.setText("沟通");
+                title_name.setText("课程讨论");
                 title_right_image.setVisibility(View.GONE);
                 break;
             case 2:

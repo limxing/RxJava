@@ -83,7 +83,6 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
                     public void onError(int i, String s) {
                         Intent intent = new Intent(mContext, LoginActivity.class);
                         startActivity(intent);
-                        finish();
                     }
 
                     @Override
@@ -166,7 +165,6 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
             LogUtils.i(this, "注册失败：" + e.getErrorCode());
             Intent intent = new Intent(mContext, LoginActivity.class);
             startActivity(intent);
-            finish();
         }
 
     }
