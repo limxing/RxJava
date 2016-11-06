@@ -443,6 +443,7 @@ public class DownLoader {
      * (通知监听器，当前任务成功执行完毕)
      */
     private void successNotice() {
+
         if (!listenerMap.isEmpty()) {
             Collection<DownLoadListener> c = listenerMap.values();
             Iterator<DownLoadListener> it = c.iterator();

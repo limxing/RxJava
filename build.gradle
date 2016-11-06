@@ -20,6 +20,9 @@ allprojects {
             url "http://maven.bughd.com/public"
         }
         maven { url 'http://repo.baichuan-android.taobao.com/content/groups/BaichuanRepositories/' }
+        flatDir{
+            dirs 'libs' //就是你放aar的目录地址
+        }
     }
 }
 

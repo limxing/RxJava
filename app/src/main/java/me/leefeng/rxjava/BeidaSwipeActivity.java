@@ -1,6 +1,9 @@
 package me.leefeng.rxjava;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +41,7 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
         setContentView(getView());
         mContext = this;
         svProgressHUD = new SVProgressHUD(this);
-
+        registerBoradcastReceiver();
         initView();
     }
 
@@ -82,6 +85,27 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(mBroadcastReceiver);
         SwipeBackHelper.onDestroy(this);
+    }
+
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+           doReceiver(action);
+        }
+
+    };
+
+    protected abstract void doReceiver(String action);
+
+    public void registerBoradcastReceiver(){
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction("me.leefeng.down");
+        myIntentFilter.addAction("me.leefeng.login");
+        //注册广播
+        registerReceiver(mBroadcastReceiver, myIntentFilter);
     }
 }

@@ -26,6 +26,7 @@ import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaData;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
+import me.leefeng.rxjava.down.DownActivity;
 import me.leefeng.rxjava.main.bean.Version;
 import rx.Observable;
 import rx.Observer;
@@ -37,7 +38,7 @@ import rx.schedulers.Schedulers;
  * Created by limxing on 2016/10/26.
  */
 
-public class MainActivity extends BeidaSwipeActivity implements MainView, BottomNavigationBar.OnTabSelectedListener {
+public class MainActivity extends BeidaSwipeActivity implements MainView, BottomNavigationBar.OnTabSelectedListener, View.OnClickListener {
 
     private HomeFragment homeFragment;
     private VideoFragment videoFragment;
@@ -51,6 +52,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
     private MainPreImp mainPre;
     private ChatFragment chatFragment;
     private View title_right_image;
+    private boolean isPhone;
 
     @Override
     protected void initView() {
@@ -58,7 +60,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         SwipeBackHelper.getCurrentPage(this)
                 .setSwipeBackEnable(false);
         SwipeBackHelper.getCurrentPage(this).setDisallowInterceptTouchEvent(true);
-
+        isPhone = getIntent().getBooleanExtra("iPhone", false);
         name = getIntent().getStringExtra("name");
         pic = getIntent().getStringExtra("pic");
         bmh = getIntent().getStringExtra("bmh");
@@ -68,6 +70,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
 
         title_name = (TextView) findViewById(R.id.title_name);
         title_right_image = findViewById(R.id.title_right_image);
+        title_right_image.setOnClickListener(this);
         findViewById(R.id.title_back).setVisibility(View.GONE);
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         bottomNavigationBar
@@ -76,14 +79,19 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
 //                .setBarBackgroundColor("#ECECEC");
         bottomNavigationBar
                 .setMode(BottomNavigationBar.MODE_FIXED);
-        bottomNavigationBar
-                .addItem(new BottomNavigationItem(R.drawable.home, "个人信息"))
-                .addItem(new BottomNavigationItem(R.drawable.chat, "沟通"))
-                .addItem(new BottomNavigationItem(R.drawable.video, "课程学习"))
+        if (isPhone) {
+            bottomNavigationBar
+                    .addItem(new BottomNavigationItem(R.drawable.chat, "沟通"))
+                    .addItem(new BottomNavigationItem(R.drawable.video, "课程学习")).initialise();
+        } else {
+            bottomNavigationBar
+                    .addItem(new BottomNavigationItem(R.drawable.home, "个人信息"))
+                    .addItem(new BottomNavigationItem(R.drawable.chat, "沟通"))
+                    .addItem(new BottomNavigationItem(R.drawable.video, "课程学习"))
 //                .addItem(new BottomNavigationItem(R.drawable.download, "离线视频"))
-                .initialise();
+                    .initialise();
+        }
         bottomNavigationBar.setTabSelectedListener(this);
-
         onTabSelected(0);
         mainPre = new MainPreImp(this);
 
@@ -152,6 +160,13 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 ToastUtils.showShort(mContext, "增加了联系人:" + username);
             }
         });
+
+        title_name.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sendBroadcast(new Intent("me.leefeng.login"));
+            }
+        }, 2000);
     }
 
 
@@ -166,11 +181,13 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         FragmentManager fm = this.getFragmentManager();
         //开启事务
         FragmentTransaction transaction = fm.beginTransaction();
+        if (isPhone) {
+            position++;
+        }
         switch (position) {
             case 0:
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
-//                    .newInstance("位置");
                 }
                 transaction.replace(R.id.tb, homeFragment);
                 title_name.setText("个人信息");
@@ -192,13 +209,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 title_name.setText("课程学习");
                 title_right_image.setVisibility(View.VISIBLE);
                 break;
-//            case 3:
-//                if (downloadFragment == null) {
-//                    downloadFragment = new DownloadFragment();
-//                }
-//                transaction.replace(R.id.tb, downloadFragment);
-//                title_name.setText("离线视频");
-//                break;
+
             default:
                 break;
         }
@@ -243,6 +254,11 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         super.onDestroy();
         mainPre.destory();
         mainPre = null;
+    }
+
+    @Override
+    protected void doReceiver(String action) {
+
     }
 
     @Override
@@ -314,6 +330,16 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
      */
     public void toDownload(View view) {
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.title_right_image:
+                Intent intent = new Intent(this, DownActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
 

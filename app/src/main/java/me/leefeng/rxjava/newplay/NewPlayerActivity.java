@@ -57,6 +57,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
     private int down_bottom_height;
     private TextView newplayer_all;
     private DownLoadManager downLoadManager;
+    private File file;
 
     @Override
     protected void initView() {
@@ -134,8 +135,14 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
 
                 player.stop();
 
-                player.setTitle(playerItemBeanList.get(current).getName())
-                        .play(playerItemBeanList.get(current).getUrl());
+                player.setTitle(playerItemBeanList.get(current).getName());
+                file = new File(playerItemBeanList.get(current).getPath());
+                if (file.exists()) {
+                    player.setUrl(file.toString()).play(0);;
+                } else {
+                    player.play(playerItemBeanList.get(current).getUrl());
+                }
+//                        .play(playerItemBeanList.get(current).getUrl());
             }
         });
 
@@ -153,10 +160,10 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 if (isDownloadController) return;
                 if (dy > 2 && isShow) {
                     isShow = false;
-                    translationY(fab, 0, 250);
+                    translationY(fab, 0, 300);
                 } else if (dy < -1 && !isShow) {
                     isShow = true;
-                    translationY(fab, 250, 0);
+                    translationY(fab, 300, 0);
                 }
             }
         });
@@ -190,8 +197,14 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 if (current < playerItemBeanList.size()) {
                     url = course.getVideos().get((int) mAdapter.getHeaderId(current)).getUrl();
                     playerItemBeanList.get(current).setPlaying(true);
-                    player.setTitle(playerItemBeanList.get(current).getName())
-                            .play(playerItemBeanList.get(current).getUrl());
+                    player.setTitle(playerItemBeanList.get(current).getName());
+                    file = new File(playerItemBeanList.get(current).getPath());
+                    if (file.exists()) {
+                        player.setUrl(file.toString()).play(0);
+                    } else {
+                        player.play(playerItemBeanList.get(current).getUrl());
+                    }
+//                            .play(playerItemBeanList.get(current).getUrl());
                 } else {
                     player.toggleFullScreen();
                 }
@@ -215,7 +228,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
             }
         }).setTitle(playerItemBeanList.get(current).getName())//设置视频的titleName
                 .setCoverImage(R.drawable.default_player);
-        File file = new File(playerItemBeanList.get(current).getPath());
+        file = new File(playerItemBeanList.get(current).getPath());
         if (file.exists()) {
             player.setUrl(file.toString());
         } else {
@@ -261,6 +274,11 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
             player.onDestroy();
 
         }
+    }
+
+    @Override
+    protected void doReceiver(String action) {
+
     }
 
     @Override
@@ -362,7 +380,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
-                translationY(view, 0, 250);
+                translationY(view, 0, 300);
                 setAnimY(newplayer_recycleview, player.getMeasuredHeight(), titleHeight);
                 padingY(newplayer_recycleview, 0, down_bottom_height);
                 translationY(newplay_title, -titleHeight, 0);
@@ -377,7 +395,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 padingY(newplayer_recycleview, down_bottom_height, 0);
                 translationY(newplay_title, 0, -titleHeight);
                 translationY(newplayer_down_bottom, 0, down_bottom_height);
-                translationY(fab, 250, 0);
+                translationY(fab, 300, 0);
                 view.bringToFront();
                 isDownloadController = false;
                 player.onResume();
@@ -398,7 +416,8 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                             /*服务器一般会有个区分不同文件的唯一ID，用以处理文件重名的情况*/
                                 info.setTaskID(itemBean.getUrl());
                                 info.setOnDownloading(true);
-                                downLoadManager.addTask(info.getTaskID(), info.getTaskID(), info.getFileName(), itemBean.getPath());
+                                downLoadManager.addTask(info.getTaskID(), info.getTaskID(),
+                                        info.getFileName(), itemBean.getPath());
                                 i++;
                             }
                         }

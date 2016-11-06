@@ -51,6 +51,11 @@ public class VideoListActivity extends BeidaSwipeActivity implements AdapterView
     }
 
     @Override
+    protected void doReceiver(String action) {
+
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("chapter", i);

@@ -3,6 +3,7 @@ package me.leefeng.rxjava.download;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class DownLoadManager {
                     if (deletedownloader.getTaskID().equals(TaskID)) {
                         taskList.remove(deletedownloader);
                         //发广播下载完成
-                        Intent intent = new Intent("com.limxing.downsuccess");
+                        Intent intent = new Intent("me.leefeng.down");
                         mycontext.sendBroadcast(intent);
                         return;
                     }
@@ -184,6 +185,7 @@ public class DownLoadManager {
         } else {
             downloadinfo.setFilePath(filepath);
         }
+        Log.i("leefeng",filepath);
         DownLoader taskDownLoader = new DownLoader(mycontext, downloadinfo, pool, userID, isSupportBreakpoint, true);
         taskDownLoader.setDownLodSuccesslistener(downloadsuccessListener);
         if (isSupportBreakpoint) {

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import cn.smssdk.SMSSDK;
 import im.fir.sdk.FIR;
 import me.leefeng.rxjava.download.DownLoadService;
 import me.leefeng.rxjava.main.Course;
@@ -101,17 +102,7 @@ public class BeidaApplication extends Application {
         EMClient.getInstance().setDebugMode(true);
 
 
-//        final String APP_KEY = "23498343";
-////必须首先执行这部分代码, 如果在":TCMSSevice"进程中，无需进行云旺（OpenIM）和app业务的初始化，以节省内存;
-//        SysUtil.setApplication(this);
-//        if (SysUtil.isTCMSServiceProcess(this)) {
-//            return;
-//        }
-////第一个参数是Application Context
-////这里的APP_KEY即应用创建时申请的APP_KEY，同时初始化必须是在主进程中
-//        if (SysUtil.isMainProcess()) {
-//            YWAPI.init((Application) getApplicationContext(), APP_KEY);
-//        }
+        SMSSDK.initSDK(this, "189b617b10eb4", "bbdaa1208d663cbc3b8b4f628ef39fd8");
     }
 
     private String getAppName(int pID) {

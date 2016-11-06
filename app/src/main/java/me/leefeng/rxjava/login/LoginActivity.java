@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.StringUtils;
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
+import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.main.MainActivity;
 import okhttp3.Call;
@@ -34,7 +36,7 @@ import okhttp3.Response;
  * Created by limxing on 2016/10/26.
  */
 
-public class LoginActivity extends BeidaActivity {
+public class LoginActivity extends BeidaSwipeActivity {
     private EditText login_id;
     private EditText login_pw;
     private String username;
@@ -43,6 +45,7 @@ public class LoginActivity extends BeidaActivity {
 
     @Override
     protected void initView() {
+        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
         login_id = (EditText) findViewById(R.id.login_id);
         login_pw = (EditText) findViewById(R.id.login_pw);
         TextView title_name = (TextView) findViewById(R.id.title_name);
@@ -61,6 +64,13 @@ public class LoginActivity extends BeidaActivity {
     protected int getView() {
         return R.layout.activity_login;
 
+    }
+
+    @Override
+    protected void doReceiver(String action) {
+        if (action.equals("me.leefeng.login")){
+            finish();
+        }
     }
 
     public void login(View view) {
@@ -125,7 +135,6 @@ public class LoginActivity extends BeidaActivity {
                 registHX(str);
 
 
-
             }
         });
     }
@@ -149,7 +158,7 @@ public class LoginActivity extends BeidaActivity {
             @Override
             public void onError(int code, String message) {
                 Log.d("onError:", "登录聊天服务器失败！" + code);
-                if (code==204){
+                if (code == 204) {
                     registUser(str);
                 }
             }
@@ -159,6 +168,7 @@ public class LoginActivity extends BeidaActivity {
 
     /**
      * 自动注册
+     *
      * @param
      * @param str
      */
@@ -168,7 +178,7 @@ public class LoginActivity extends BeidaActivity {
 
         } catch (HyphenateException e) {
             e.printStackTrace();
-            LogUtils.i(this,"注册失败："+e.getErrorCode());
+            LogUtils.i(this, "注册失败：" + e.getErrorCode());
 
         }
         goBeida(str);
@@ -189,7 +199,7 @@ public class LoginActivity extends BeidaActivity {
         i = str.indexOf("已经获得");
         int j = str.indexOf("</td>", i);
 
-        final String xf=str.substring(i,j);
+        final String xf = str.substring(i, j);
         LogUtils.i("pic:" + pic + "=bmh:" + bmh);
         runOnUiThread(new Runnable() {
             @Override
@@ -204,9 +214,20 @@ public class LoginActivity extends BeidaActivity {
                 intent.putExtra("xh", xh);
                 intent.putExtra("xf", xf);
                 startActivity(intent);
-                finish();
+                
             }
         });
 
+    }
+
+    public void phoneLogin(View view) {
+        Intent intent = new Intent(this, PhoneLoginActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        sendBroadcast(new Intent("me.leefeng.login"));
     }
 }

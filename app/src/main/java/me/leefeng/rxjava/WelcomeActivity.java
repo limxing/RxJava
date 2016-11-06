@@ -36,15 +36,17 @@ import okhttp3.Response;
  * Created by limxing on 2016/10/27.
  */
 
-public class WelcomeActivity extends BeidaActivity implements
+public class WelcomeActivity extends BeidaSwipeActivity implements
         EasyPermissions.PermissionCallbacks {
 
     private static final int RC_PERM = 0;
     private String username;
     private String password;
 
+
     @Override
     protected void initView() {
+        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
         new Thread() {
             @Override
             public void run() {
@@ -68,14 +70,37 @@ public class WelcomeActivity extends BeidaActivity implements
         if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
             username = SharedPreferencesUtil.getStringData(mContext, "username", "");
             password = SharedPreferencesUtil.getStringData(mContext, "password", "");
-            goLogin();
+            if (username.length() == 11 && username.equals(password)) {
+                EMClient.getInstance().login(username, username, new EMCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        intent.putExtra("isPhone",true);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        Intent intent = new Intent(mContext, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onProgress(int i, String s) {
+
+                    }//回调
+                });
+            } else {
+                goLogin();
+            }
         } else {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Intent intent = new Intent(mContext, LoginActivity.class);
                     startActivity(intent);
-                    finish();
+                    
                 }
             });
         }
@@ -86,6 +111,13 @@ public class WelcomeActivity extends BeidaActivity implements
         return R.layout.activity_welcome;
     }
 
+    @Override
+    protected void doReceiver(String action) {
+        if (action.equals("me.leefeng.login")){
+            finish();
+        }
+    }
+
     private void goLogin() {
         EMClient.getInstance().login(username, username, new EMCallBack() {//回调
             @Override
@@ -93,15 +125,15 @@ public class WelcomeActivity extends BeidaActivity implements
                 EMClient.getInstance().groupManager().loadAllGroups();
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.d("main", "登录聊天服务器成功！");
-//                goBeida();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(mContext, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+                goBeida();
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Intent intent = new Intent(mContext, MainActivity.class);
+//                        intent.putExtra("isPhone",isPhone);
+//                        startActivity(intent);
+//                    }
+//                });
             }
 
             @Override
@@ -158,7 +190,6 @@ public class WelcomeActivity extends BeidaActivity implements
                     public void run() {
                         Intent intent = new Intent(mContext, LoginActivity.class);
                         startActivity(intent);
-                        finish();
                     }
                 });
 
@@ -197,7 +228,6 @@ public class WelcomeActivity extends BeidaActivity implements
                         intent.putExtra("xh", xh);
                         intent.putExtra("xf", xf);
                         startActivity(intent);
-                        finish();
 
                     }
                 });

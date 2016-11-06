@@ -26,7 +26,7 @@ import me.leefeng.rxjava.download.TaskInfo;
 public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.MasonryView>
         implements StickyRecyclerHeadersAdapter<PlayerListAdapter.MasonryView> {
     private final List<String> catelogue;
-    private final ArrayList<PlayerItemBean> playerItemBeanList;
+    private final List<PlayerItemBean> playerItemBeanList;
     private ArrayList<String> downloadList;
     private Drawable drawable;
     private Drawable drawable_pre;
@@ -36,7 +36,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
     private Drawable checked;
 
 
-    public PlayerListAdapter(List<String> catelogue, ArrayList<PlayerItemBean> playerItemBeanList) {
+    public PlayerListAdapter(List<String> catelogue, List<PlayerItemBean> playerItemBeanList) {
         this.catelogue = catelogue;
         this.playerItemBeanList = playerItemBeanList;
           /*获取下载管理器*/

@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "me.leefeng.rxjava"
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -68,4 +67,7 @@ dependencies {
     compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
     //actionbar
     compile 'com.android.support:design:25.0.0'
+    compile files('src/main/jniLibs/MobCommons-2016.1012.1447.jar')
+    compile files('src/main/jniLibs/MobTools-2016.1012.1447.jar')
+    compile name:'SMSSDK-2.1.2',ext:'aar'
 }
