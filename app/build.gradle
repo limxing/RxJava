@@ -69,5 +69,9 @@ dependencies {
     compile 'com.android.support:design:25.0.0'
     compile files('src/main/jniLibs/MobCommons-2016.1012.1447.jar')
     compile files('src/main/jniLibs/MobTools-2016.1012.1447.jar')
-    compile name:'SMSSDK-2.1.2',ext:'aar'
+    compile name: 'SMSSDK-2.1.2', ext: 'aar'
+    //    butterknife
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile project(':itemswipemenu')
 }

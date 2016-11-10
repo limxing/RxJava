@@ -2,16 +2,17 @@ package me.leefeng.rxjava;
 
 import android.Manifest;
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.limxing.library.BaseActivity;
 import com.limxing.library.Permission.CheckPermListener;
-import com.limxing.library.Permission.EasyPermissions;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -21,29 +22,38 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Permission;
 import java.util.Scanner;
 
-import okhttp3.ResponseBody;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends BaseActivity {
 
+    @BindView(R.id.title_back)
+    ImageView titleBack;
+    @BindView(R.id.title_name)
+    TextView titleName;
+    @BindView(R.id.title_right_image)
+    ImageView titleRightImage;
+    @BindView(R.id.tb)
+    FrameLayout tb;
+    @BindView(R.id.bottom_navigation_bar)
+    BottomNavigationBar bottomNavigationBar;
+    @BindView(R.id.activity_main)
+    RelativeLayout activityMain;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStatusBarDarkMode(true,this);
+        setStatusBarDarkMode(true, this);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 //        final ImageView drawable = (ImageView) findViewById(R.id.drawable);
 ////        简单数组打印
 //        String[] s = {"Hello", "Android", "JAVA", "OC", "Swift"};
@@ -296,6 +306,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 小米设置颜色
+     *
      * @param darkmode
      * @param activity
      */

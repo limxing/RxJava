@@ -79,6 +79,7 @@
             android:name=".WelcomeActivity"
             android:theme="@style/AppFullScreen">
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -139,6 +140,9 @@
         <activity
             android:name=".login.PhoneLoginActivity"
             android:theme="@style/Theme.Swipe.Back" />
+        <activity android:name=".TextActivity">
+
+        </activity>
     </application>
 
 </manifest>

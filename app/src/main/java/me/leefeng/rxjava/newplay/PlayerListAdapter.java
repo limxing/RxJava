@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.leefeng.itemswipemenu.ItemMenuView;
+import me.leefeng.itemswipemenu.SwipeMenuLayout;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.download.DownLoadManager;
 import me.leefeng.rxjava.download.DownLoadService;
@@ -23,8 +25,8 @@ import me.leefeng.rxjava.download.TaskInfo;
  * Created by limxing on 2016/11/2.
  */
 
-public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.MasonryView>
-        implements StickyRecyclerHeadersAdapter<PlayerListAdapter.MasonryView> {
+public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.MasonryTextView>
+        implements StickyRecyclerHeadersAdapter<PlayerListAdapter.MasonryTextView> {
     private final List<String> catelogue;
     private final List<PlayerItemBean> playerItemBeanList;
     private ArrayList<String> downloadList;
@@ -57,13 +59,13 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
     }
 
     @Override
-    public void onBindHeaderViewHolder(MasonryView holder, int position) {
+    public void onBindHeaderViewHolder(MasonryTextView holder, int position) {
 
         holder.textView.setText(catelogue.get((int) getHeaderId(position)));
     }
 
     @Override
-    public MasonryView onCreateHeaderViewHolder(ViewGroup parent) {
+    public MasonryTextView onCreateHeaderViewHolder(ViewGroup parent) {
 //        View text = View.inflate(parent.getContext(), R.layout.textview_item, null);
         TextView text = new TextView(parent.getContext());
         text.setWidth(parent.getResources().getDisplayMetrics().widthPixels);
@@ -71,12 +73,12 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
         text.setTextSize(16);
         text.setPadding(25, 20, 0, 10);
         text.setSingleLine();
-        return new MasonryView(text);
+        return new MasonryTextView(text);
     }
 
 
     @Override
-    public MasonryView onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MasonryTextView onCreateViewHolder(ViewGroup parent, int viewType) {
 
 //        View text = View.inflate(parent.getContext(), R.layout.textview_item, null);
         TextView text = new TextView(parent.getContext());
@@ -112,11 +114,12 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
                 }
             }
         });
-        return new MasonryView(text);
+        return new MasonryTextView(text);
+//        return new MasonryView(new ItemMenuView(parent.getContext(),text));
     }
 
     @Override
-    public void onBindViewHolder(MasonryView holder, int position) {
+    public void onBindViewHolder(MasonryTextView holder, int position) {
         PlayerItemBean playerItemBean = playerItemBeanList.get(position);
         holder.textView.setText(playerItemBean.getName());
         holder.textView.setTag(position);
@@ -162,7 +165,20 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
         public MasonryView(View itemView) {
             super(itemView);
 //            textView = (TextView) itemView.findViewById(R.id.textview_item_tv);
+            textView = (TextView) ((ItemMenuView) itemView).getContentView();
+        }
+
+    }
+    public static class MasonryTextView extends RecyclerView.ViewHolder {
+
+        TextView textView;
+
+
+        public MasonryTextView(View itemView) {
+            super(itemView);
             textView = (TextView) itemView;
+//            .findViewById(R.id.textview_item_tv);
+//            textView = (TextView) ((ItemMenuView) itemView).getContentView();
         }
 
     }
