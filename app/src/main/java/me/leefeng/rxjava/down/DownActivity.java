@@ -58,7 +58,7 @@ public class DownActivity extends BeidaSwipeActivity implements AdapterView.OnIt
                     for (File f : files) {
                         if (f.isDirectory()) {
                             for (Course course : BeidaApplication.cList) {
-                                if (course.getId().equals(f.getName())) {
+                                if (course.getId().equals(f.getName()) && hasMp4(f)) {
                                     list.add(course);
                                 }
                             }
@@ -96,7 +96,7 @@ public class DownActivity extends BeidaSwipeActivity implements AdapterView.OnIt
 
     @Override
     protected void doReceiver(String action) {
-        if (action.equals("me.leefeng.down")){
+        if (action.equals("me.leefeng.down")) {
             initListData();
         }
     }
@@ -113,5 +113,17 @@ public class DownActivity extends BeidaSwipeActivity implements AdapterView.OnIt
     public void onClick(View view) {
         Intent intent = new Intent(this, DownloadingActivity.class);
         startActivity(intent);
+    }
+
+    private boolean hasMp4(File file) {
+        boolean b = false;
+        File[] files = file.listFiles();
+        for (File file1 : files) {
+            if (file1.isDirectory() && file1.list().length > 0) {
+                b = true;
+                break;
+            }
+        }
+        return b;
     }
 }

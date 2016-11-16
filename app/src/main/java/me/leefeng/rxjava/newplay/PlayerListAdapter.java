@@ -36,6 +36,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
     private OnItemClickListener listener;
     private Drawable check_normal;
     private Drawable checked;
+    private boolean isDown;
 
 
     public PlayerListAdapter(List<String> catelogue, List<PlayerItemBean> playerItemBeanList) {
@@ -124,7 +125,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
         holder.textView.setText(playerItemBean.getName());
         holder.textView.setTag(position);
         //判断是否存在这个下载任务
-        if (isDownloadController&&(downloadList.contains(playerItemBean.getUrl())
+        if (!isDown&&isDownloadController&&(downloadList.contains(playerItemBean.getUrl())
                 || new File(playerItemBean.getPath()).exists())) {
             holder.textView.setTextColor(Color.GRAY);
             playerItemBean.setChecked(false);
@@ -193,5 +194,9 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Ma
 
     public void setDownloadController(boolean downloadController) {
         isDownloadController = downloadController;
+    }
+
+    public void setDown(boolean down) {
+        isDown = down;
     }
 }

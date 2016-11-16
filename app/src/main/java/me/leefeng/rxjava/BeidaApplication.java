@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
 import cn.smssdk.SMSSDK;
 import im.fir.sdk.FIR;
 import me.leefeng.rxjava.download.DownLoadService;
@@ -103,6 +104,8 @@ public class BeidaApplication extends Application {
 
 
         SMSSDK.initSDK(this, "189b617b10eb4", "bbdaa1208d663cbc3b8b4f628ef39fd8");
+
+        Bmob.initialize(this, "0b9dc7e47883f0a6010b86fa5b9afb18");
     }
 
     private String getAppName(int pID) {

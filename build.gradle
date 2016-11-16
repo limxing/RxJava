@@ -23,6 +23,8 @@ allprojects {
         flatDir{
             dirs 'libs' //就是你放aar的目录地址
         }
+        //Bmob的maven仓库地址--必填
+        maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
     }
 }
 

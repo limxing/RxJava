@@ -216,7 +216,6 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 /**
                  * 监听视频的相关信息。
                  */
-
             }
         }).onError(new SuperPlayer.OnErrorListener() {
             @Override
@@ -224,6 +223,7 @@ public class NewPlayerActivity extends BeidaSwipeActivity implements View.OnClic
                 /**
                  * 监听视频播放失败的回调
                  */
+                ToastUtils.showLong(mContext,"播放失败");
 
             }
         }).setTitle(playerItemBeanList.get(current).getName())//设置视频的titleName

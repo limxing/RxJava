@@ -20,6 +20,10 @@ import java.security.Permission;
 import java.security.Permissions;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 import me.leefeng.rxjava.login.*;
 import me.leefeng.rxjava.login.LoginActivity;
 import me.leefeng.rxjava.main.*;
@@ -75,7 +79,7 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
                     @Override
                     public void onSuccess() {
                         Intent intent = new Intent(mContext, MainActivity.class);
-                        intent.putExtra("isPhone",true);
+                        intent.putExtra("isPhone", true);
                         startActivity(intent);
                     }
 
@@ -99,7 +103,7 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
                 public void run() {
                     Intent intent = new Intent(mContext, LoginActivity.class);
                     startActivity(intent);
-                    
+
                 }
             });
         }
@@ -112,12 +116,29 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
 
     @Override
     protected void doReceiver(String action) {
-        if (action.equals("me.leefeng.login")){
+        if (action.equals("me.leefeng.login")) {
             finish();
         }
     }
 
     private void goLogin() {
+        BmobQuery<User> bmobQuery = new BmobQuery<>();
+        bmobQuery.addWhereEqualTo("username", username);
+        bmobQuery.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> list, BmobException e) {
+
+                if (e == null)
+
+                {
+                    LogUtils.i("获取数据成功：" + list.size());
+                } else
+
+                {
+                    LogUtils.i("获取数据失败：" + e.getMessage());
+                }
+            }
+        });
         EMClient.getInstance().login(username, username, new EMCallBack() {//回调
             @Override
             public void onSuccess() {

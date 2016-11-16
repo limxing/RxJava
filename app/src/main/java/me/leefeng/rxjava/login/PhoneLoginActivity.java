@@ -17,6 +17,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
@@ -56,22 +57,29 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
 //                        startActivity(intent);
                     } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                         //获取验证码成功
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                svProgressHUD.showInfoWithStatus("获取验证码成功");
+                            }});
 
                     } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {
                         //返回支持发送验证码的国家列表
                     }
                 } else {
                     ((Throwable) data).printStackTrace();
-                    final String message = JSON.parseObject(((Throwable) data).getMessage()).getString("detail");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            svProgressHUD.showErrorWithStatus(message);
-                            button.setEnabled(true);
-                            button.setText("获取验证码");
-                            timer.cancel();
-                        }
-                    });
+                    try {
+                        final String message = JSON.parseObject(((Throwable) data).getMessage()).getString("detail");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                svProgressHUD.showErrorWithStatus(message);
+                                button.setEnabled(true);
+                                button.setText("获取验证码");
+                                timer.cancel();
+                            }
+                        });
+                    }catch (Exception e){}
 
                 }
             }
@@ -163,10 +171,17 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
             }
 
             @Override
-            public void onError(int code, String message) {
+            public void onError(final int code, String message) {
                 Log.d("onError:", "登录聊天服务器失败！" + code);
                 if (code == 204) {
                     registUser(username);
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            svProgressHUD.showErrorWithStatus("登录失败请重试"+code);
+                        }
+                    });
                 }
             }
         });

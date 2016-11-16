@@ -19,6 +19,8 @@ import com.limxing.library.utils.StringUtils;
 
 import java.io.IOException;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.BeidaSwipeActivity;
@@ -57,6 +59,7 @@ public class LoginActivity extends BeidaSwipeActivity {
             password = SharedPreferencesUtil.getStringData(mContext, "password", "");
             goLogin();
         }
+        closeInput();
 
     }
 
@@ -68,7 +71,7 @@ public class LoginActivity extends BeidaSwipeActivity {
 
     @Override
     protected void doReceiver(String action) {
-        if (action.equals("me.leefeng.login")){
+        if (action.equals("me.leefeng.login")) {
             finish();
         }
     }
@@ -89,6 +92,7 @@ public class LoginActivity extends BeidaSwipeActivity {
     }
 
     private void goLogin() {
+
         svProgressHUD.showLoading("正在登录");
         RequestBody formBody = new FormBody.Builder()
                 .add("myID", username)
@@ -156,10 +160,17 @@ public class LoginActivity extends BeidaSwipeActivity {
             }
 
             @Override
-            public void onError(int code, String message) {
+            public void onError(final int code, String message) {
                 Log.d("onError:", "登录聊天服务器失败！" + code);
                 if (code == 204) {
                     registUser(str);
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            svProgressHUD.showErrorWithStatus("登录失败请重试"+code);
+                        }
+                    });
                 }
             }
         });
@@ -214,7 +225,7 @@ public class LoginActivity extends BeidaSwipeActivity {
                 intent.putExtra("xh", xh);
                 intent.putExtra("xf", xf);
                 startActivity(intent);
-                
+
             }
         });
 

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
                 .setSwipeBackEnable(true)
                 .setSwipeSensitivity(0.5f)
                 .setSwipeRelateEnable(true)
+                .setScrimColor(0x000000)
                 .setSwipeRelateOffset(300);
 //        设置顶部状态栏
         SystemBarTintManager.initSystemBar(this);
