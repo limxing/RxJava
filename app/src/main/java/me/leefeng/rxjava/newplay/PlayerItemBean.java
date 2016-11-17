@@ -82,7 +82,7 @@ public class PlayerItemBean implements Comparable {
         String[] ss = s.split("\\.");
         if (ss.length == 2) {
             if (ss[1].length() == 1) {
-                ss[1] = "0" + ss[1]+"00";
+                ss[1] = "0" + ss[1];
             }
             return Integer.parseInt(ss[0] + "" + ss[1]+"00");
         }

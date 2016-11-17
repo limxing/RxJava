@@ -283,18 +283,6 @@ public class DownCourseActivity extends BeidaSwipeActivity implements View.OnCli
         super.onBackPressed();
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
-            newplayer_recycleview.setVisibility(View.VISIBLE);
-        } else {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
-            newplayer_recycleview.setVisibility(View.GONE);
-        }
-    }
-
 
     @Override
     public void onClick(View view) {
@@ -452,5 +440,18 @@ public class DownCourseActivity extends BeidaSwipeActivity implements View.OnCli
             }
 
         });
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
+            fab.setVisibility(View.VISIBLE);
+            newplayer_recycleview.setVisibility(View.VISIBLE);
+        } else {
+            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
+            fab.setVisibility(View.GONE);
+            newplayer_recycleview.setVisibility(View.GONE);
+        }
     }
 }
