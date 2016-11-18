@@ -1,5 +1,8 @@
 package me.leefeng.rxjava.main;
 
+import android.content.Context;
+import android.content.Intent;
+
 import me.leefeng.rxjava.main.bean.Version;
 
 /**
@@ -22,4 +25,8 @@ public interface MainView {
     void updateApp(Version version);
 
     void openApk();
+
+    Context getContext();
+
+    void startActivity(Intent intent);
 }

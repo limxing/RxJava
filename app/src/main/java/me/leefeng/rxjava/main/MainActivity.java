@@ -2,6 +2,7 @@ package me.leefeng.rxjava.main;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -22,8 +23,7 @@ import com.limxing.library.utils.ToastUtils;
 import com.limxing.publicc.alertview.AlertView;
 import com.limxing.publicc.alertview.OnItemClickListener;
 
-import me.leefeng.rxjava.BeidaActivity;
-import me.leefeng.rxjava.BeidaData;
+import me.leefeng.rxjava.Beidadata;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.down.DownActivity;
@@ -255,6 +255,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         super.onDestroy();
         mainPre.destory();
         mainPre = null;
+        chatFragment.destory();
     }
 
     @Override
@@ -318,10 +319,15 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(BeidaData.FILE_DOWN_APK),
+        intent.setDataAndType(Uri.fromFile(Beidadata.FILE_DOWN_APK),
                 "application/vnd.android.package-archive");
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public Context getContext() {
+        return getContext();
     }
 
     /**

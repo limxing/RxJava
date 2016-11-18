@@ -19,6 +19,7 @@ import com.limxing.library.utils.ToastUtils;
 import java.util.List;
 import java.util.Map;
 
+import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.main.chat.ChatPagerAdapter;
 import rx.Observable;
@@ -39,11 +40,6 @@ public class ChatFragment extends Fragment implements ViewPager.OnPageChangeList
     private MainView mainView;
     private View view;
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mainView = null;
-    }
 
     public void setMainView(final MainView mainView) {
         this.mainView = mainView;
@@ -51,7 +47,7 @@ public class ChatFragment extends Fragment implements ViewPager.OnPageChangeList
 
     public ChatFragment() {
 //        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-        chatPagerAdapter = new ChatPagerAdapter();
+        chatPagerAdapter = new ChatPagerAdapter(BeidaApplication.getContext());
 
     }
 
@@ -93,5 +89,10 @@ public class ChatFragment extends Fragment implements ViewPager.OnPageChangeList
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public void destory() {
+        mainView=null;
+        chatPagerAdapter.destory();
     }
 }

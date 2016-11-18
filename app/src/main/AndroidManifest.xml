@@ -143,6 +143,9 @@
         <activity android:name=".TextActivity">
 
         </activity>
+        <activity
+            android:name=".singlechat.SingleChatActivity"
+            android:theme="@style/Theme.Swipe.Back" />
     </application>
 
 </manifest>

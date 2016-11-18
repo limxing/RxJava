@@ -40,10 +40,13 @@ public class BeidaApplication extends Application {
 
     public static OkHttpClient okHttpClient;
     public static List<Course> cList;
+    static Context appContext ;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+        appContext=getApplicationContext();
         startService(new Intent(this, DownLoadService.class));
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(new CookieJar() {
@@ -84,7 +87,7 @@ public class BeidaApplication extends Application {
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(true);
 //        ...
-        Context appContext = this;
+
         int pid = android.os.Process.myPid();
         String processAppName = getAppName(pid);
 // 如果APP启用了远程的service，此application:onCreate会被调用2次
@@ -126,5 +129,9 @@ public class BeidaApplication extends Application {
             }
         }
         return processName;
+    }
+
+    public static Context getContext() {
+        return appContext;
     }
 }

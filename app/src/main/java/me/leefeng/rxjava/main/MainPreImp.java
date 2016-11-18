@@ -3,17 +3,9 @@ package me.leefeng.rxjava.main;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Environment;
-import android.os.Looper;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.limxing.library.SVProgressHUD.SVProgressHUD;
 import com.limxing.library.utils.IOUtils;
 import com.limxing.library.utils.ToastUtils;
 
@@ -26,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import me.leefeng.rxjava.BeidaApplication;
-import me.leefeng.rxjava.BeidaData;
+import me.leefeng.rxjava.Beidadata;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.main.bean.Version;
 import me.leefeng.rxjava.main.down.DownloadApi;
@@ -222,7 +214,7 @@ public class MainPreImp implements MainPre {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     InputStream is = response.body().byteStream();
-                    File file = BeidaData.FILE_DOWN_APK;
+                    File file = Beidadata.FILE_DOWN_APK;
                     if (file.exists()) {
                         file.delete();
                     }
