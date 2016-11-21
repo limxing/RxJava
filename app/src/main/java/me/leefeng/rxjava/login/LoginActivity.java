@@ -19,8 +19,8 @@ import com.limxing.library.utils.StringUtils;
 
 import java.io.IOException;
 
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.SaveListener;
+//import cn.bmob.v3.exception.BmobException;
+//import cn.bmob.v3.listener.SaveListener;
 import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.BeidaSwipeActivity;

@@ -1,12 +1,12 @@
 package me.leefeng.rxjava.login;
 
-import cn.bmob.v3.BmobObject;
+//import cn.bmob.v3.BmobObject;
 
 /**
  * Created by limxing on 2016/11/15.
  */
 
-public class User extends BmobObject {
+public class User  {
     private String username;
     private String password;
 

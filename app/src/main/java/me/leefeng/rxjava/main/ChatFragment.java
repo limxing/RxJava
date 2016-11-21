@@ -1,9 +1,10 @@
 package me.leefeng.rxjava.main;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -36,24 +37,22 @@ import rx.schedulers.Schedulers;
 
 public class ChatFragment extends Fragment implements ViewPager.OnPageChangeListener {
 
-    private final ChatPagerAdapter chatPagerAdapter;
-    private MainView mainView;
+    private static ChatFragment chatFragment;
+    private static ChatPagerAdapter chatPagerAdapter;
     private View view;
 
 
-    public void setMainView(final MainView mainView) {
-        this.mainView = mainView;
-    }
+
 
     public ChatFragment() {
 //        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-        chatPagerAdapter = new ChatPagerAdapter(BeidaApplication.getContext());
+
 
     }
 
-    public static ChatFragment getInstance(MainView mainView) {
-        ChatFragment chatFragment = new ChatFragment();
-        chatFragment.setMainView(mainView);
+    public static ChatFragment getInstance(FragmentManager fragmentManager) {
+         chatFragment = new ChatFragment();
+        chatPagerAdapter = new ChatPagerAdapter(fragmentManager);
         return chatFragment;
 
     }
@@ -92,7 +91,6 @@ public class ChatFragment extends Fragment implements ViewPager.OnPageChangeList
     }
 
     public void destory() {
-        mainView=null;
         chatPagerAdapter.destory();
     }
 }

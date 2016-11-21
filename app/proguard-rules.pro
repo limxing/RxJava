@@ -69,3 +69,11 @@ public void *(***);
 -keep class com.superplayer.library.** { *;}
 -dontwarn tv.danmaku.ijk.media.player.**
 -keep class tv.danmaku.ijk.media.player.** { *;}
+
+-dontwarn cn.bmob.**
+-keep class cn.bmob.** { *;}
+-dontwarn com.google.gson.**
+-keep class com.google.gson.** { *; }
+
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

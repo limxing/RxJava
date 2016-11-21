@@ -20,11 +20,6 @@ import java.security.Permission;
 import java.security.Permissions;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.SaveListener;
-import me.leefeng.rxjava.login.*;
 import me.leefeng.rxjava.login.LoginActivity;
 import me.leefeng.rxjava.main.*;
 import me.leefeng.rxjava.main.MainActivity;
@@ -70,14 +65,21 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
         }.start();
     }
 
+    /**
+     * OPENIM if username not null
+     */
     private void next() {
         if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
             username = SharedPreferencesUtil.getStringData(mContext, "username", "");
             password = SharedPreferencesUtil.getStringData(mContext, "password", "");
             if (username.length() == 11 && username.equals(password)) {
+                
+
                 EMClient.getInstance().login(username, username, new EMCallBack() {
                     @Override
                     public void onSuccess() {
+                        EMClient.getInstance().groupManager().loadAllGroups();
+                        EMClient.getInstance().chatManager().loadAllConversations();
                         Intent intent = new Intent(mContext, MainActivity.class);
                         intent.putExtra("isPhone", true);
                         startActivity(intent);
@@ -122,23 +124,23 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
     }
 
     private void goLogin() {
-        BmobQuery<User> bmobQuery = new BmobQuery<>();
-        bmobQuery.addWhereEqualTo("username", username);
-        bmobQuery.findObjects(new FindListener<User>() {
-            @Override
-            public void done(List<User> list, BmobException e) {
-
-                if (e == null)
-
-                {
-                    LogUtils.i("获取数据成功：" + list.size());
-                } else
-
-                {
-                    LogUtils.i("获取数据失败：" + e.getMessage());
-                }
-            }
-        });
+//        BmobQuery<User> bmobQuery = new BmobQuery<>();
+//        bmobQuery.addWhereEqualTo("username", username);
+//        bmobQuery.findObjects(new FindListener<User>() {
+//            @Override
+//            public void done(List<User> list, BmobException e) {
+//
+//                if (e == null)
+//
+//                {
+//                    LogUtils.i("获取数据成功：" + list.size());
+//                } else
+//
+//                {
+//                    LogUtils.i("获取数据失败：" + e.getMessage());
+//                }
+//            }
+//        });
         EMClient.getInstance().login(username, username, new EMCallBack() {//回调
             @Override
             public void onSuccess() {

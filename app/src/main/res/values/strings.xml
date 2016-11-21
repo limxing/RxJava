@@ -4,6 +4,8 @@
     <string name="home_bmh">报名号：</string>
     <string name="home_xh">学\t\t\t号：</string>
 
+    <string name="Ali_APP_KEY">23498343</string>
+
     <string-array name="language_c">
         <item>导言</item>
         <item>第一章 C语言概述</item>

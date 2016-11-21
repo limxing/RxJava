@@ -14,12 +14,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.StringUtils;
+import com.limxing.library.utils.ToastUtils;
 
 import java.util.List;
 
@@ -44,7 +47,8 @@ import rx.android.schedulers.AndroidSchedulers;
  * 修改历史：
  */
 
-public class SingleChatActivity extends BeidaSwipeActivity implements SingleChatView, View.OnLayoutChangeListener, View.OnTouchListener, TextView.OnEditorActionListener {
+public class SingleChatActivity extends BeidaSwipeActivity implements SingleChatView,
+        View.OnLayoutChangeListener, View.OnTouchListener, TextView.OnEditorActionListener {
     @BindView(R.id.title_name)
     TextView titleName;
     @BindView(R.id.title_right_image)
@@ -59,6 +63,7 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
     EditText singlechatEdittext;
     private ChatListAdapter adapter;
     private String id;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void initView() {
@@ -79,17 +84,29 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         init();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EMClient.getInstance().chatManager().removeMessageListener(msgListener);
     }
 
     private void init() {
         id = getIntent().getStringExtra("id");
         titleName.setText("与" + id + "聊天中");
-        adapter = new ChatListAdapter();
-        singlechatListView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ChatListAdapter(id);
+        linearLayoutManager = new LinearLayoutManager(this);
+//        linearLayoutManager.setStackFromEnd(true);
+        singlechatListView.setLayoutManager(linearLayoutManager);
+
         singlechatListView.setAdapter(adapter);
         singlechatListView.addOnLayoutChangeListener(this);
         singlechatListView.setOnTouchListener(this);
         singlechatListView.setItemAnimator(new DefaultItemAnimator());
+
+
         Observable.create(new Observable.OnSubscribe<List<EMMessage>>() {
             @Override
             public void call(Subscriber<? super List<EMMessage>> subscriber) {
@@ -112,19 +129,28 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
                     @Override
                     public void onNext(List<EMMessage> emMessages) {
                         adapter.setList(emMessages);
-                        singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                        singlechatListView.scrollToPosition(adapter.getItemCount() - 1);
+//                        singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
                     }
                 });
 
         EMClient.getInstance().chatManager().addMessageListener(msgListener);
 
         singlechatEdittext.setOnEditorActionListener(this);
+        singlechatEdittext.setHorizontallyScrolling(false);
+        singlechatEdittext.setMaxLines(3);
     }
+
 
     EMMessageListener msgListener = new EMMessageListener() {
         @Override
         public void onMessageReceived(List<EMMessage> list) {
-
+            LogUtils.i("收到消息" + Thread.currentThread());
+            adapter.addMessage(list);
+            if (linearLayoutManager.findLastVisibleItemPosition() == adapter.getItemCount() - 2) {
+                singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+            }
+            adapter.notifyItemInserted(adapter.getItemCount() - 1);
         }
 
         @Override
@@ -134,17 +160,22 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
 
         @Override
         public void onMessageReadAckReceived(List<EMMessage> list) {
+//消息已读
+            LogUtils.i("消息已读");
 
         }
 
         @Override
         public void onMessageDeliveryAckReceived(List<EMMessage> list) {
+//消息已送达
+            LogUtils.i("消息被接收");
 
+//            adapter.messageSendSuccess(list);
         }
 
         @Override
         public void onMessageChanged(EMMessage emMessage, Object o) {
-
+            LogUtils.i("消息状态改变");
         }
     };
 
@@ -189,13 +220,23 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
             String s = singlechatEdittext.getText().toString().trim();
             if (!StringUtils.isEmpty(s)) {
                 EMMessage message = EMMessage.createTxtSendMessage(s, id);
+                message.setStatus(EMMessage.Status.CREATE);
                 EMClient.getInstance().chatManager().sendMessage(message);
                 adapter.addMessage(message);
                 singlechatEdittext.setText("");
-//                singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                adapter.notifyItemInserted(adapter.getItemCount() - 1);
+                v.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                }, 500);
                 return true;
             }
         }
         return false;
     }
+
+
 }

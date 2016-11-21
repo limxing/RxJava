@@ -1,10 +1,10 @@
 package me.leefeng.rxjava.main;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -179,7 +179,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
 
     @Override
     public void onTabSelected(int position) {
-        FragmentManager fm = this.getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         //开启事务
         FragmentTransaction transaction = fm.beginTransaction();
         if (isPhone) {
@@ -196,7 +196,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 break;
             case 1:
                 if (chatFragment == null) {
-                    chatFragment = ChatFragment.getInstance(this);
+                    chatFragment = ChatFragment.getInstance(getSupportFragmentManager());
                 }
                 transaction.replace(R.id.tb, chatFragment);
                 title_name.setText("课程讨论");
@@ -220,7 +220,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
 
     @Override
     public void onTabUnselected(int position) {
-        Log.d("limxing", "onTabUnselected() called with: " + "position = [" + position + "]");
+//        Log.d("limxing", "onTabUnselected() called with: " + "position = [" + position + "]");
     }
 
     @Override
