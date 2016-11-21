@@ -1,1 +1,1 @@
-include ':app', ':itemswipemenu'
+include ':app', ':itemswipemenu', ':lfrecyclerview'

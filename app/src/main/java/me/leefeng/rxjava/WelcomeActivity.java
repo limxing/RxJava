@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
+import com.easemob.EMCallBack;
+import com.easemob.EMError;
+import com.easemob.chat.EMChat;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMGroupManager;
+import com.easemob.exceptions.EaseMobException;
 import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.Permission.CheckPermListener;
 import com.limxing.library.Permission.EasyPermissions;
@@ -45,7 +49,7 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
 
     @Override
     protected void initView() {
-        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
+//        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
         new Thread() {
             @Override
             public void run() {
@@ -69,33 +73,12 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
      * OPENIM if username not null
      */
     private void next() {
+
         if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
             username = SharedPreferencesUtil.getStringData(mContext, "username", "");
             password = SharedPreferencesUtil.getStringData(mContext, "password", "");
             if (username.length() == 11 && username.equals(password)) {
-                
-
-                EMClient.getInstance().login(username, username, new EMCallBack() {
-                    @Override
-                    public void onSuccess() {
-                        EMClient.getInstance().groupManager().loadAllGroups();
-                        EMClient.getInstance().chatManager().loadAllConversations();
-                        Intent intent = new Intent(mContext, MainActivity.class);
-                        intent.putExtra("isPhone", true);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onError(int i, String s) {
-                        Intent intent = new Intent(mContext, LoginActivity.class);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onProgress(int i, String s) {
-
-                    }//回调
-                });
+                loginHuanXin(username);
             } else {
                 goLogin();
             }
@@ -124,38 +107,17 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
     }
 
     private void goLogin() {
-//        BmobQuery<User> bmobQuery = new BmobQuery<>();
-//        bmobQuery.addWhereEqualTo("username", username);
-//        bmobQuery.findObjects(new FindListener<User>() {
-//            @Override
-//            public void done(List<User> list, BmobException e) {
-//
-//                if (e == null)
-//
-//                {
-//                    LogUtils.i("获取数据成功：" + list.size());
-//                } else
-//
-//                {
-//                    LogUtils.i("获取数据失败：" + e.getMessage());
-//                }
-//            }
-//        });
-        EMClient.getInstance().login(username, username, new EMCallBack() {//回调
+        EMChatManager.getInstance().login(username, username, new EMCallBack() {//回调
             @Override
             public void onSuccess() {
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("main", "登录聊天服务器成功！");
-                goBeida();
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent intent = new Intent(mContext, MainActivity.class);
-//                        intent.putExtra("isPhone",isPhone);
-//                        startActivity(intent);
-//                    }
-//                });
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        EMGroupManager.getInstance().loadAllGroups();
+                        EMChatManager.getInstance().loadAllConversations();
+                        Log.d("main", "登录聊天服务器成功！");
+                        goBeida();
+                    }
+                });
             }
 
             @Override
@@ -165,12 +127,13 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
 
             @Override
             public void onError(int code, String message) {
-                Log.d("onError:", "登录聊天服务器失败！" + code);
+                Log.d("main", "登录聊天服务器失败！");
                 if (code == 204) {
                     registUser();
                 }
             }
         });
+
 
     }
 
@@ -181,11 +144,21 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
      */
     private void registUser() {
         try {
-            EMClient.getInstance().createAccount(username, username);//同步方法
+            // 调用sdk注册方法
+            EMChatManager.getInstance().createAccountOnServer(username, username);
             goBeida();
-        } catch (HyphenateException e) {
-            e.printStackTrace();
-            LogUtils.i(this, "注册失败：" + e.getErrorCode());
+        } catch (final EaseMobException e) {
+            //注册失败
+            int errorCode = e.getErrorCode();
+            if (errorCode == EMError.NONETWORK_ERROR) {
+                Toast.makeText(getApplicationContext(), "网络异常，请检查网络！", Toast.LENGTH_SHORT).show();
+            } else if (errorCode == EMError.USER_ALREADY_EXISTS) {
+                Toast.makeText(getApplicationContext(), "用户已存在！", Toast.LENGTH_SHORT).show();
+            } else if (errorCode == EMError.UNAUTHORIZED) {
+                Toast.makeText(getApplicationContext(), "注册失败，无权限！", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "注册失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
             Intent intent = new Intent(mContext, LoginActivity.class);
             startActivity(intent);
         }
@@ -328,5 +301,45 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
 
+    }
+
+
+    /**
+     * 登录环信的方法
+     *
+     * @param username
+     */
+    private void loginHuanXin(String username) {
+        if (EMChat.getInstance().isLoggedIn()) {
+            startActivity(new Intent(this, MainActivity.class));
+            return;
+        }
+        EMChatManager.getInstance().login(username, username, new EMCallBack() {//回调
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        EMGroupManager.getInstance().loadAllGroups();
+                        EMChatManager.getInstance().loadAllConversations();
+                        Log.d("main", "登录聊天服务器成功！");
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        intent.putExtra("isPhone", true);
+                        startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+
+            @Override
+            public void onError(int code, String message) {
+                Log.d("main", "登录聊天服务器失败！");
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

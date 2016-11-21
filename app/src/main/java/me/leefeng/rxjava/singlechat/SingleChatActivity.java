@@ -1,9 +1,14 @@
 package me.leefeng.rxjava.singlechat;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,12 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.hyphenate.EMCallBack;
-import com.hyphenate.EMMessageListener;
-import com.hyphenate.chat.EMChatManager;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMMessage;
+import com.easemob.EMCallBack;
+import com.easemob.EMEventListener;
+import com.easemob.EMNotifierEvent;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMMessage;
+import com.easemob.chat.TextMessageBody;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.StringUtils;
 import com.limxing.library.utils.ToastUtils;
@@ -64,6 +70,8 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
     private ChatListAdapter adapter;
     private String id;
     private LinearLayoutManager linearLayoutManager;
+    private IntentFilter intentFilter;
+    private NewMessageBroadcastReceiver msgReceiver;
 
     @Override
     protected void initView() {
@@ -84,13 +92,30 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         init();
+        singlechatListView.scrollToPosition(adapter.getItemCount() - 1);
+        msgReceiver = new NewMessageBroadcastReceiver();
+        intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
+        intentFilter.setPriority(3);
+//        EMChatManager.getInstance().registerEventListener(msgListener);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(msgReceiver, intentFilter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+//        EMChatManager.getInstance().unregisterEventListener(msgListener);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(msgReceiver);
     }
 
     private void init() {
@@ -105,77 +130,69 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
         singlechatListView.addOnLayoutChangeListener(this);
         singlechatListView.setOnTouchListener(this);
         singlechatListView.setItemAnimator(new DefaultItemAnimator());
-
-
-        Observable.create(new Observable.OnSubscribe<List<EMMessage>>() {
+        singlechatListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void call(Subscriber<? super List<EMMessage>> subscriber) {
-                EMConversation conversation = EMClient.getInstance().chatManager().getConversation(id);
-                //获取此会话的所有消息
-                subscriber.onNext(conversation.getAllMessages());
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (linearLayoutManager.findFirstVisibleItemPosition()==0){
+                    adapter.loadMoreMessage();
+                }
             }
-        }).subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<EMMessage>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<EMMessage> emMessages) {
-                        adapter.setList(emMessages);
-                        singlechatListView.scrollToPosition(adapter.getItemCount() - 1);
-//                        singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
-                    }
-                });
-
-        EMClient.getInstance().chatManager().addMessageListener(msgListener);
+        });
 
         singlechatEdittext.setOnEditorActionListener(this);
         singlechatEdittext.setHorizontallyScrolling(false);
         singlechatEdittext.setMaxLines(3);
     }
 
-
-    EMMessageListener msgListener = new EMMessageListener() {
+    private class NewMessageBroadcastReceiver extends BroadcastReceiver {
         @Override
-        public void onMessageReceived(List<EMMessage> list) {
-            LogUtils.i("收到消息" + Thread.currentThread());
-            adapter.addMessage(list);
-            if (linearLayoutManager.findLastVisibleItemPosition() == adapter.getItemCount() - 2) {
-                singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+        public void onReceive(Context context, Intent intent) {
+            //消息id
+            String msgId = intent.getStringExtra("msgid");
+            //发消息的人的username(userid)
+            String msgFrom = intent.getStringExtra("from");
+            //消息类型，文本、图片、语音消息等，这里返回的值为msg.type.ordinal()。
+            //所以消息type实际为是enum类型
+            int msgType = intent.getIntExtra("type", 0);
+            LogUtils.i(getClass(), "new message id:" + msgId + " from:" + msgFrom + " type:" + msgType);
+            //更方便的方法是通过msgId直接获取整个message
+            EMMessage message = EMChatManager.getInstance().getMessage(msgId);
+            if (msgFrom.equals(id)) {
+                if (linearLayoutManager.findLastVisibleItemPosition() == adapter.getItemCount() - 2) {
+                    singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                }
+                adapter.notifyItemInserted(adapter.getItemCount() - 1);
             }
-            adapter.notifyItemInserted(adapter.getItemCount() - 1);
         }
+    }
 
+    EMEventListener msgListener = new EMEventListener() {
         @Override
-        public void onCmdMessageReceived(List<EMMessage> list) {
-
-        }
-
-        @Override
-        public void onMessageReadAckReceived(List<EMMessage> list) {
-//消息已读
-            LogUtils.i("消息已读");
-
-        }
-
-        @Override
-        public void onMessageDeliveryAckReceived(List<EMMessage> list) {
-//消息已送达
-            LogUtils.i("消息被接收");
-
-//            adapter.messageSendSuccess(list);
-        }
-
-        @Override
-        public void onMessageChanged(EMMessage emMessage, Object o) {
-            LogUtils.i("消息状态改变");
+        public void onEvent(EMNotifierEvent emNotifierEvent) {
+            EMMessage message = (EMMessage) emNotifierEvent.getData();
+            switch (emNotifierEvent.getEvent()) {
+                case EventDeliveryAck:
+                    //已发送
+                    ToastUtils.showShort(mContext, "发送成功");
+                    adapter.notifyDataSetChanged();
+                    break;
+                case EventNewCMDMessage:
+                    break;
+                case EventNewMessage:
+                    //新消息
+                    if (message.getFrom().equals(id)) {
+                        if (linearLayoutManager.findLastVisibleItemPosition() == adapter.getItemCount() - 2) {
+                            singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                        }
+                        adapter.notifyItemInserted(adapter.getItemCount() - 1);
+                    }
+                    break;
+                case EventReadAck:
+                    //一读
+                    ToastUtils.showShort(mContext, "消息一读");
+                    break;
+            }
         }
     };
 
@@ -219,19 +236,45 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
         if (actionId == EditorInfo.IME_ACTION_SEND) {
             String s = singlechatEdittext.getText().toString().trim();
             if (!StringUtils.isEmpty(s)) {
-                EMMessage message = EMMessage.createTxtSendMessage(s, id);
-                message.setStatus(EMMessage.Status.CREATE);
-                EMClient.getInstance().chatManager().sendMessage(message);
-                adapter.addMessage(message);
+                final EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
+                TextMessageBody txtBody = new TextMessageBody(s);
+                message.addBody(txtBody);
+                message.setTo(id);
+                message.setReceipt(id);
+                message.setFrom(EMChatManager.getInstance().getCurrentUser());
+                adapter.addMessage(message, false);
+                EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        LogUtils.i(getClass(), "发送成功onSuccess" + Thread.currentThread());
+//                        message.status = EMMessage.Status.SUCCESS;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+//                        message.status = EMMessage.Status.FAIL;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onProgress(int i, String s) {
+                        message.status = EMMessage.Status.INPROGRESS;
+                    }
+                });
                 singlechatEdittext.setText("");
                 singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
-                adapter.notifyItemInserted(adapter.getItemCount() - 1);
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                }, 500);
+
                 return true;
             }
         }

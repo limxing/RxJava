@@ -1,35 +1,16 @@
 package me.leefeng.rxjava.main;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.MenuCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMConversation;
-import com.hyphenate.exceptions.HyphenateException;
-import com.limxing.library.utils.LogUtils;
-import com.limxing.library.utils.ToastUtils;
 
-import java.util.List;
-import java.util.Map;
-
-import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.main.chat.ChatPagerAdapter;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.observers.Observers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by limxing on 2016/10/26.

@@ -7,15 +7,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.hyphenate.chat.EMChatManager;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMMessage;
+import com.easemob.chat.EMChat;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMMessage;
 import com.limxing.library.utils.LogUtils;
-import com.limxing.library.utils.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import me.leefeng.rxjava.R;
@@ -38,21 +36,21 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     private static final int CHATLEFT = 0;
     private static final int CHATRight = 1;
-    private static final int CHATCENTER = 2;
     private final String id;
-
-    private List<EMMessage> list;
+    private final EMConversation conversation;
 
 
     public ChatListAdapter(String id) {
-        this.id=id;
-        this.list = new ArrayList<>();
-
+        this.id = id;
+        conversation = EMChatManager.getInstance().getConversation(id);
+//LogUtils.i(getClass(),conversation.getMsgCount());
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (list.get(position).getFrom().equals(EMClient.getInstance().getCurrentUser())) {
+        if (conversation.getMessage(position) != null &&
+                conversation.getMessage(position).getFrom()
+                        .equals(EMChatManager.getInstance().getCurrentUser())) {
             return CHATLEFT;
         }
         return CHATRight;
@@ -71,15 +69,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     @Override
     public void onBindViewHolder(ChatListItem holder, int position) {
-        if (position == 0 || position > 0 && (list.get(position).getMsgTime() - list.get(position - 1).getMsgTime())
+        if (position == 0 || position > 0 && (conversation.getMessage(position).getMsgTime()
+                - conversation.getMessage(position - 1).getMsgTime())
                 > 1000 * 60) {
             holder.time.setVisibility(View.VISIBLE);
         } else {
             holder.time.setVisibility(View.GONE);
         }
-
-
-        EMMessage message = list.get(position);
+        EMMessage message = conversation.getMessage(position);
         holder.chat_item_content.removeAllViews();
 
         holder.time.setText(TimeString.getTimefromLong(message.getMsgTime()));
@@ -92,7 +89,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
             textView.setTextSize(16);
             if (getItemViewType(position) == CHATLEFT) {
                 textView.setTextColor(0xffffffff);
-                EMMessage.Status status = message.status();
+                EMMessage.Status status = message.status;
                 LogUtils.i("消息：" + textView.getText().toString() + "=状态=" + status);
                 if (status == EMMessage.Status.SUCCESS) {
                     holder.loadview.setVisibility(View.INVISIBLE);
@@ -100,7 +97,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
                 } else if (status == EMMessage.Status.FAIL) {
                     holder.loadview.setVisibility(View.INVISIBLE);
-//                    holder.loadview.setDrawable(R.drawable.warn);
                     holder.warnImage.setVisibility(View.VISIBLE);
 
                 } else {
@@ -117,23 +113,25 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return conversation.getMsgCount();
     }
 
-    public void setList(List<EMMessage> emMessages) {
-        this.list = emMessages;
-        notifyDataSetChanged();
-    }
-
-    public void addMessage(EMMessage message) {
-        list.add(message);
-
+    /**
+     * @param message
+     * @param isReceive
+     */
+    public void addMessage(EMMessage message, boolean isReceive) {
+        if (isReceive) {
+            EMChatManager.getInstance().getConversation(id).markMessageAsRead(message.getMsgId());
+        }
+        conversation.addMessage(message);
+        notifyItemInserted(getItemCount() - 1);
     }
 
     public void addMessage(List<EMMessage> l) {
         for (EMMessage message : l) {
-            EMClient.getInstance().chatManager().getConversation(id).markMessageAsRead(message.getMsgId());
-            list.add(message);
+            EMChatManager.getInstance().getConversation(id).markMessageAsRead(message.getMsgId());
+            conversation.addMessage(message);
         }
 
     }
@@ -146,6 +144,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
     public void messageSendSuccess(List<EMMessage> l) {
         notifyDataSetChanged();
 
+    }
+
+    /**
+     * 加载更多的消息
+     */
+    public void loadMoreMessage() {
+        conversation.loadMoreMsgFromDB(conversation.getMessage(0).getMsgId(), 20);
+//        notifyDataSetChanged();
     }
 
 

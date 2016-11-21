@@ -1,18 +1,16 @@
 package me.leefeng.rxjava.main.chat;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMMessage;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMMessage;
 import com.limxing.library.utils.LogUtils;
 
+
 import java.util.List;
-import java.util.Map;
 
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.utils.TimeString;

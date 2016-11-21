@@ -3,13 +3,15 @@ package me.leefeng.rxjava.login;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
+import com.easemob.EMCallBack;
+import com.easemob.EMError;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMGroupManager;
+import com.easemob.exceptions.EaseMobException;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.StringUtils;
@@ -17,7 +19,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
@@ -156,14 +157,17 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
     }
 
     private void registHX(final String username) {
-
-        EMClient.getInstance().login(username, username, new EMCallBack() {//回调
+        EMChatManager.getInstance().login(username,username,new EMCallBack() {//回调
             @Override
             public void onSuccess() {
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("main", "登录聊天服务器成功！");
-                goMain(username);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        EMGroupManager.getInstance().loadAllGroups();
+                        EMChatManager.getInstance().loadAllConversations();
+                        Log.d("main", "登录聊天服务器成功！");
+                        goMain(username);
+                    }
+                });
             }
 
             @Override
@@ -173,7 +177,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
 
             @Override
             public void onError(final int code, String message) {
-                Log.d("onError:", "登录聊天服务器失败！" + code);
+                Log.d("main", "登录聊天服务器失败！");
                 if (code == 204) {
                     registUser(username);
                 }else {
@@ -186,24 +190,38 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
                 }
             }
         });
-
     }
 
     /**
      * 自动注册
      *
      * @param
-     * @param str
+     * @param username
      */
-    private void registUser(String str) {
+    private void registUser(String username) {
         try {
-            EMClient.getInstance().createAccount(str, str);//同步方法
-        } catch (HyphenateException e) {
-            e.printStackTrace();
-            LogUtils.i(this, "注册失败：" + e.getErrorCode());
+            // 调用sdk注册方法
+            EMChatManager.getInstance().createAccountOnServer(username, username);
+            goMain(username);
+        } catch (final EaseMobException e) {
+            //注册失败
+            int errorCode = e.getErrorCode();
+            if (errorCode == EMError.NONETWORK_ERROR) {
+                Toast.makeText(getApplicationContext(), "网络异常，请检查网络！", Toast.LENGTH_SHORT).show();
+            } else if (errorCode == EMError.USER_ALREADY_EXISTS) {
+                Toast.makeText(getApplicationContext(), "用户已存在！", Toast.LENGTH_SHORT).show();
+                registHX(username);
+            } else if (errorCode == EMError.UNAUTHORIZED) {
+                Toast.makeText(getApplicationContext(), "注册失败，无权限！", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "注册失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            svProgressHUD.showErrorWithStatus("登录失败请重试");
         }
-        goMain(str);
+
+
     }
+
 
     private void goMain(String username) {
         runOnUiThread(new Runnable() {

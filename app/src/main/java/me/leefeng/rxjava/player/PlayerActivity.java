@@ -193,11 +193,11 @@ public class PlayerActivity extends PlayerBaseActivity implements AdapterView.On
 //        if (player != null) {
 //            player.onConfigurationChanged(newConfig);
 //        }
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
-        } else {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
-        }
+//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
+//        } else {
+//            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
+//        }
     }
 }
 //http://60.207.246.58/wms2.pkudl.cn/ggkc/36081014/video/300k/Vc36081014C01S05P00-300K.mp4?wsiphost=local

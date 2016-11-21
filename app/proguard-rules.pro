@@ -64,6 +64,10 @@ public void *(***);
 -keep class org.apache.http.** { *;}
 -dontwarn android.net.http.**
 -keep class android.net.http.** { *;}
+-keep class com.easemob.** {*;}
+-keep class org.jivesoftware.** {*;}
+-keep class org.apache.** {*;}
+-dontwarn  com.easemob.**
 
 -dontwarn com.superplayer.library.**
 -keep class com.superplayer.library.** { *;}

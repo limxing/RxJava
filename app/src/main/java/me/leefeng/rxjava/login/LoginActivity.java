@@ -2,16 +2,16 @@ package me.leefeng.rxjava.login;
 
 import android.content.Intent;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
+import com.easemob.EMCallBack;
+import com.easemob.EMError;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMGroupManager;
+import com.easemob.exceptions.EaseMobException;
 import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
@@ -19,9 +19,6 @@ import com.limxing.library.utils.StringUtils;
 
 import java.io.IOException;
 
-//import cn.bmob.v3.exception.BmobException;
-//import cn.bmob.v3.listener.SaveListener;
-import me.leefeng.rxjava.BeidaActivity;
 import me.leefeng.rxjava.BeidaApplication;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
@@ -47,7 +44,7 @@ public class LoginActivity extends BeidaSwipeActivity {
 
     @Override
     protected void initView() {
-        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
+//        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
         login_id = (EditText) findViewById(R.id.login_id);
         login_pw = (EditText) findViewById(R.id.login_pw);
         TextView title_name = (TextView) findViewById(R.id.title_name);
@@ -144,14 +141,17 @@ public class LoginActivity extends BeidaSwipeActivity {
     }
 
     private void registHX(final String str) {
-
-        EMClient.getInstance().login(username, username, new EMCallBack() {//回调
+        EMChatManager.getInstance().login(username, username, new EMCallBack() {//回调
             @Override
             public void onSuccess() {
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("main", "登录聊天服务器成功！");
-                goBeida(str);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        EMGroupManager.getInstance().loadAllGroups();
+                        EMChatManager.getInstance().loadAllConversations();
+                        Log.d("main", "登录聊天服务器成功！");
+                        goBeida(str);
+                    }
+                });
             }
 
             @Override
@@ -161,14 +161,14 @@ public class LoginActivity extends BeidaSwipeActivity {
 
             @Override
             public void onError(final int code, String message) {
-                Log.d("onError:", "登录聊天服务器失败！" + code);
+                Log.d("main", "登录聊天服务器失败！");
                 if (code == 204) {
                     registUser(str);
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            svProgressHUD.showErrorWithStatus("登录失败请重试"+code);
+                            svProgressHUD.showErrorWithStatus("登录失败请重试" + code);
                         }
                     });
                 }
@@ -185,14 +185,26 @@ public class LoginActivity extends BeidaSwipeActivity {
      */
     private void registUser(String str) {
         try {
-            EMClient.getInstance().createAccount(username, username);//同步方法
-
-        } catch (HyphenateException e) {
-            e.printStackTrace();
-            LogUtils.i(this, "注册失败：" + e.getErrorCode());
-
+            // 调用sdk注册方法
+            EMChatManager.getInstance().createAccountOnServer(username, username);
+            goBeida(str);
+        } catch (final EaseMobException e) {
+            //注册失败
+            int errorCode = e.getErrorCode();
+            if (errorCode == EMError.NONETWORK_ERROR) {
+                Toast.makeText(getApplicationContext(), "网络异常，请检查网络！", Toast.LENGTH_SHORT).show();
+            } else if (errorCode == EMError.USER_ALREADY_EXISTS) {
+                Toast.makeText(getApplicationContext(), "用户已存在！", Toast.LENGTH_SHORT).show();
+                goLogin();
+            } else if (errorCode == EMError.UNAUTHORIZED) {
+                Toast.makeText(getApplicationContext(), "注册失败，无权限！", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "注册失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            svProgressHUD.showErrorWithStatus("登录失败请重试");
         }
-        goBeida(str);
+
+
     }
 
     private void goBeida(String str) {

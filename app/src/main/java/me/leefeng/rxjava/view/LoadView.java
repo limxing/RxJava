@@ -21,6 +21,8 @@ public class LoadView extends ImageView {
     private int width;
     private int height;
     private Drawable drawable;
+    private Matrix max;
+    private Runnable run;
 
     public LoadView(Context context) {
         super(context);
@@ -29,6 +31,14 @@ public class LoadView extends ImageView {
     public LoadView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (runnable == null) {
+            runnable = new MyRunable(this);
+        }
     }
 
     public LoadView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -46,8 +56,28 @@ public class LoadView extends ImageView {
         measure(0, 0);
         width = getMeasuredWidth() / 2;
         height = getMeasuredHeight() / 2;
-        runnable = new MyRunable(this);
-        runnable.run();
+        if (runnable == null) {
+            runnable = new MyRunable(this);
+        }
+//        runnable.run();
+        max = new Matrix();
+        run = new Runnable() {
+            public float degrees;
+
+            @Override
+            public void run() {
+                degrees += 30f;
+                max.setRotate(degrees, width, height);
+                setImageMatrix(max);
+                if (degrees == 360) {
+                    degrees = 0;
+                }
+                postDelayed(run, 80);
+
+            }
+        };
+        run.run();
+
     }
 
 
@@ -71,9 +101,16 @@ public class LoadView extends ImageView {
                 if (degrees == 360) {
                     degrees = 0;
                 }
-                loadingViewSoftReference.get().postDelayed(loadingViewSoftReference.get().runnable, 80);
+                loadingViewSoftReference.get().postDelayed(loadingViewSoftReference.get().getRun(), 80);
             }
         }
 
+    }
+
+    private Runnable getRun() {
+        if (runnable == null) {
+            runnable = new MyRunable(this);
+        }
+        return runnable;
     }
 }

@@ -49,35 +49,31 @@
         <activity
             android:name=".player.PlayerActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/SwipeFullScreen">
+            android:theme="@style/FullScreen">
 
         </activity>
         <activity
             android:name=".newplay.NewPlayerActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/SwipeFullScreen">
+            android:theme="@style/FullScreen">
 
         </activity>
 
         <activity
             android:name=".login.LoginActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppSlideRight">
+            android:configChanges="orientation|screenSize">
 
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppSlideRight">
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize">
 
 
         </activity>
-        <activity
-            android:name=".video.VideoListActivity"
-            android:theme="@style/Theme.Swipe.Back" />
-        <activity
-            android:name=".WelcomeActivity"
-            android:theme="@style/AppFullScreen">
+        <activity android:name=".video.VideoListActivity" />
+        <activity android:name=".WelcomeActivity"
+            >
             <intent-filter>
 
                 <action android:name="android.intent.action.MAIN" />
@@ -101,51 +97,44 @@
         <meta-data
             android:name="EASEMOB_APPKEY"
             android:value="1189161028178774#beida" />
+        <service android:name="com.easemob.chat.EMChatService" />
         <!-- 声明SDK所需的service SDK核心功能-->
-        <service
-            android:name="com.hyphenate.chat.EMChatService"
-            android:exported="true" />
+        <!--<service-->
+        <!--android:name="com.hyphenate.chat.EMChatService"-->
+        <!--android:exported="true" />-->
         <!-- 声明SDK所需的receiver -->
-        <receiver android:name="com.hyphenate.chat.EMMonitorReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <data android:scheme="package" />
-            </intent-filter>
-            <!-- 可选filter -->
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name="com.hyphenate.chat.EMMonitorReceiver">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.PACKAGE_REMOVED" />-->
+        <!--<data android:scheme="package" />-->
+        <!--</intent-filter>-->
+        <!--&lt;!&ndash; 可选filter &ndash;&gt;-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+        <!--<action android:name="android.intent.action.USER_PRESENT" />-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
         <service
             android:name=".download.DownLoadService"
             android:priority="1000" />
 
-        <activity
-            android:name=".down.DownActivity"
-            android:theme="@style/Theme.Swipe.Back" />
-        <activity
-            android:name=".down.DownloadingActivity"
-            android:theme="@style/Theme.Swipe.Back" />
+        <activity android:name=".down.DownActivity" />
+        <activity android:name=".down.DownloadingActivity" />
         <activity
             android:name=".down.DownCourseActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/SwipeFullScreen" />
+            android:theme="@style/FullScreen" />
 
         <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".login.PhoneLoginActivity"
-            android:theme="@style/Theme.Swipe.Back" />
+        <activity android:name=".login.PhoneLoginActivity" />
         <activity android:name=".TextActivity">
 
         </activity>
-        <activity
-            android:name=".singlechat.SingleChatActivity"
-            android:theme="@style/Theme.Swipe.Back" />
+        <activity android:name=".singlechat.SingleChatActivity" />
     </application>
 
 </manifest>

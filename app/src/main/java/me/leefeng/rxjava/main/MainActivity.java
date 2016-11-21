@@ -11,11 +11,14 @@ import android.widget.TextView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.hyphenate.EMConnectionListener;
-import com.hyphenate.EMContactListener;
-import com.hyphenate.EMError;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.util.NetUtils;
+import com.easemob.EMConnectionListener;
+import com.easemob.EMError;
+import com.easemob.chat.EMChat;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMContactListener;
+import com.easemob.chat.EMContactManager;
+import com.easemob.util.NetUtils;
+
 import com.jude.swipbackhelper.SwipeBackHelper;
 import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
@@ -23,11 +26,14 @@ import com.limxing.library.utils.ToastUtils;
 import com.limxing.publicc.alertview.AlertView;
 import com.limxing.publicc.alertview.OnItemClickListener;
 
+import java.util.List;
+
 import me.leefeng.rxjava.Beidadata;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.down.DownActivity;
 import me.leefeng.rxjava.main.bean.Version;
+import me.leefeng.rxjava.main.chat.ContactsFragment;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -50,16 +56,17 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
     public static String xf;
     private TextView title_name;
     private MainPreImp mainPre;
-    private ChatFragment chatFragment;
+    private ContactsFragment chatFragment;
     private View title_right_image;
     private boolean isPhone;
 
     @Override
     protected void initView() {
 //        设置主界面不能够被滑动
-        SwipeBackHelper.getCurrentPage(this)
-                .setSwipeBackEnable(false);
-        SwipeBackHelper.getCurrentPage(this).setDisallowInterceptTouchEvent(true);
+//        SwipeBackHelper.getCurrentPage(this)
+//                .setSwipeBackEnable(false);
+//        SwipeBackHelper.getCurrentPage(this).setDisallowInterceptTouchEvent(true);
+
         isPhone = getIntent().getBooleanExtra("isPhone", false);
         name = getIntent().getStringExtra("name");
         pic = getIntent().getStringExtra("pic");
@@ -96,12 +103,15 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         onTabSelected(0);
         mainPre = new MainPreImp(this);
 
-        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
+
+        //注册一个监听连接状态的listener
+        EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
+
         if (!SharedPreferencesUtil.getBooleanData(mContext, "isNickname", false)) {
             Observable.create(new Observable.OnSubscribe<Boolean>() {
                 @Override
                 public void call(Subscriber<? super Boolean> subscriber) {
-                    subscriber.onNext(EMClient.getInstance().updateCurrentUserNick(name));
+                    subscriber.onNext(EMChatManager.getInstance().updateCurrentUserNick(name));
 
                 }
             }).subscribeOn(Schedulers.io())
@@ -120,56 +130,54 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                         @Override
                         public void onNext(Boolean aBoolean) {
                             SharedPreferencesUtil.saveBooleanData(mContext, "isNickname", aBoolean);
-                            if (aBoolean.booleanValue()) {
-                                LogUtils.i(mContext, EMClient.getInstance().getCurrentUser());
-
-                            }
                         }
                     });
         }
 
-        EMClient.getInstance().contactManager().setContactListener(new EMContactListener() {
+        EMContactManager.getInstance().setContactListener(new EMContactListener() {
 
             @Override
             public void onContactAgreed(String username) {
                 //好友请求被同意
-                ToastUtils.showShort(mContext, "好友请求被同意:" + username);
             }
 
             @Override
             public void onContactRefused(String username) {
                 //好友请求被拒绝
-                ToastUtils.showShort(mContext, "好友请求被拒绝:" + username);
+            }
+
+            @Override
+            public void onContactAdded(List<String> list) {
+
             }
 
             @Override
             public void onContactInvited(String username, String reason) {
                 //收到好友邀请
-                ToastUtils.showShort(mContext, "到好友邀请:" + username + '=' + reason);
             }
 
             @Override
-            public void onContactDeleted(String username) {
+            public void onContactDeleted(List<String> usernameList) {
                 //被删除时回调此方法
-                ToastUtils.showShort(mContext, "被删除:" + username);
             }
 
 
-            @Override
-            public void onContactAdded(String username) {
-                //增加了联系人时回调此方法
-                ToastUtils.showShort(mContext, "增加了联系人:" + username);
-            }
         });
-
+        EMChat.getInstance().setAppInited();
         title_name.postDelayed(new Runnable() {
             @Override
             public void run() {
                 sendBroadcast(new Intent("me.leefeng.login"));
             }
         }, 2000);
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     @Override
     protected int getView() {
@@ -196,7 +204,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 break;
             case 1:
                 if (chatFragment == null) {
-                    chatFragment = ChatFragment.getInstance(getSupportFragmentManager());
+                    chatFragment = ContactsFragment.getInstance();
                 }
                 transaction.replace(R.id.tb, chatFragment);
                 title_name.setText("课程讨论");
@@ -255,7 +263,6 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         super.onDestroy();
         mainPre.destory();
         mainPre = null;
-        chatFragment.destory();
     }
 
     @Override
@@ -349,7 +356,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         }
     }
 
-
+    //实现ConnectionListener接口
     private class MyConnectionListener implements EMConnectionListener {
         @Override
         public void onConnected() {
@@ -362,20 +369,16 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 @Override
                 public void run() {
                     if (error == EMError.USER_REMOVED) {
-                        ToastUtils.showLong(mContext, "帐号已经被移除");
                         // 显示帐号已经被移除
-                    } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                    } else if (error == EMError.CONNECTION_CONFLICT) {
                         // 显示帐号在其他设备登录
-                        ToastUtils.showLong(mContext, "帐号在其他设备登录");
+                        ToastUtils.showShort(mContext, "帐号在其他设备登录");
                     } else {
-                        if (NetUtils.hasNetwork(mContext)) {
-                            ToastUtils.showLong(mContext, "连接不到聊天服务器");
+                        if (NetUtils.hasNetwork(MainActivity.this)) {
+                            //连接不到聊天服务器
+                        } else {
+                            //当前网络不可用，请检查网络设置
                         }
-                        //连接不到聊天服务器
-                        else {
-                            ToastUtils.showLong(mContext, "当前网络不可用，请检查网络设置");
-                        }
-                        //当前网络不可用，请检查网络设置
                     }
                 }
             });

@@ -445,11 +445,11 @@ public class DownCourseActivity extends BeidaSwipeActivity implements View.OnCli
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
+//            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
             fab.setVisibility(View.VISIBLE);
             newplayer_recycleview.setVisibility(View.VISIBLE);
         } else {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
+//            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
             fab.setVisibility(View.GONE);
             newplayer_recycleview.setVisibility(View.GONE);
         }

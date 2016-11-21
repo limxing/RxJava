@@ -30,14 +30,14 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        swipebackhelper功能实现
-        SwipeBackHelper.onCreate(this);
-        SwipeBackHelper.getCurrentPage(this)
-                .setClosePercent(0.5f)
-                .setSwipeBackEnable(true)
-                .setSwipeSensitivity(0.5f)
-                .setSwipeRelateEnable(true)
-                .setScrimColor(0x000000)
-                .setSwipeRelateOffset(300);
+//        SwipeBackHelper.onCreate(this);
+//        SwipeBackHelper.getCurrentPage(this)
+//                .setClosePercent(0.5f)
+//                .setSwipeBackEnable(true)
+//                .setSwipeSensitivity(0.5f)
+//                .setSwipeRelateEnable(true)
+//                .setScrimColor(0x000000)
+//                .setSwipeRelateOffset(300);
 //        设置顶部状态栏
         SystemBarTintManager.initSystemBar(this);
         setContentView(getView());
@@ -78,17 +78,17 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
 
 
     //    swipebackhelper功能实现
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        SwipeBackHelper.onPostCreate(this);
-    }
+//    @Override
+//    protected void onPostCreate(Bundle savedInstanceState) {
+//        super.onPostCreate(savedInstanceState);
+//        SwipeBackHelper.onPostCreate(this);
+//    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver);
-        SwipeBackHelper.onDestroy(this);
+//        SwipeBackHelper.onDestroy(this);
     }
 
 
@@ -110,4 +110,25 @@ public abstract class BeidaSwipeActivity extends AppCompatActivity {
         //注册广播
         registerReceiver(mBroadcastReceiver, myIntentFilter);
     }
+//
+//    /**
+//     * 切换界面动画开启一个Activiyty
+//     */
+//
+//    @Override
+//    public void startActivity(Intent intent) {
+//        super.startActivity(intent);
+//        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//    }
+//
+//    /**
+//     * 切换界面动画关闭一个Activiyty
+//     */
+//
+//    @Override
+//    public void finish() {
+//        super.finish();
+//        overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+//    }
+
 }

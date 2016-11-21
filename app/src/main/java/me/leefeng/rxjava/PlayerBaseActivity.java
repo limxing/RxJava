@@ -24,13 +24,13 @@ public abstract class PlayerBaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        swipebackhelper功能实现
-        SwipeBackHelper.onCreate(this);
-        SwipeBackHelper.getCurrentPage(this)
-                .setClosePercent(0.5f)
-                .setSwipeBackEnable(true)
-                .setSwipeSensitivity(0.5f)
-                .setSwipeRelateEnable(true)
-                .setSwipeRelateOffset(300);
+//        SwipeBackHelper.onCreate(this);
+//        SwipeBackHelper.getCurrentPage(this)
+//                .setClosePercent(0.5f)
+//                .setSwipeBackEnable(true)
+//                .setSwipeSensitivity(0.5f)
+//                .setSwipeRelateEnable(true)
+//                .setSwipeRelateOffset(300);
 //        设置顶部状态栏
         setContentView(getView());
         mContext = this;

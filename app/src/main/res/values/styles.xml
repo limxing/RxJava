@@ -8,26 +8,42 @@
         <item name="colorAccent">@color/bac</item>
 
     </style>
-    <style name="AppSlideRight" parent="AppTheme">
-        <!-- Customize your theme here. -->
-        <item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>
 
-    </style>
-    <style name="AppFullScreen" parent="AppSlideRight">
+
+    <!--<style name="AppSlideRight" parent="AppTheme">-->
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>-->
+
+    <!--</style>-->
+
+    <!--<style name="AppFullScreen" parent="AppSlideRight">-->
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="android:windowFullscreen">true</item>-->
+    <!--</style>-->
+
+    <style name="FullScreen" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="SwipeFullScreen" parent="Theme.Swipe.Back">
-        <!-- Customize your theme here. -->
-        <item name="android:windowFullscreen">true</item>
-    </style>
+    <!--<style name="Theme.Swipe.Back" parent="AppTheme">-->
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <!--<item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>-->
 
-    <style name="Theme.Swipe.Back" parent="AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>
+    <!--</style>-->
 
-    </style>
+    <!--<style name="Theme.Swipe.Back_Main" parent="AppTheme">-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>-->
+
+    <!--</style>-->
+
+    <!--<style name="Theme.Swipe.Back_Welcome" parent="AppTheme">-->
+        <!--<item name="android:windowAnimationStyle">@style/SlideRightAnimation</item>-->
+        <!--<item name="android:windowFullscreen">true</item>-->
+
+    <!--</style>-->
 
 </resources>
