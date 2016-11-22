@@ -110,17 +110,6 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
     public void phoneLoginButton(View view) {
         closeInput();
         registHX(phone.getText().toString().trim());
-//        String pw = phone_pw.getText().toString();
-//        if (StringUtils.isEmpty(phoneNum)) {
-//            svProgressHUD.showErrorWithStatus("请输入手机号");
-//            return;
-//        }
-//        if (StringUtils.isEmpty(pw)) {
-//            svProgressHUD.showErrorWithStatus("请输入验证码");
-//            return;
-//        }
-//        SMSSDK.submitVerificationCode("86", phoneNum, pw.trim());
-//        svProgressHUD.showLoading("正在登录");
     }
 
     private TextView button;
@@ -233,7 +222,6 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
         SharedPreferencesUtil.saveStringData(mContext, "username", username);
         SharedPreferencesUtil.saveStringData(mContext, "password", username);
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("isPhone", true);
         startActivity(intent);
     }
 

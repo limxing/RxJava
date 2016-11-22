@@ -48,12 +48,6 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
 
     private HomeFragment homeFragment;
     private VideoFragment videoFragment;
-    //    private DownloadFragment downloadFragment;
-    public static String name;
-    public static String pic;
-    public static String bmh;
-    public static String xh;
-    public static String xf;
     private TextView title_name;
     private MainPreImp mainPre;
     private ContactsFragment chatFragment;
@@ -62,19 +56,9 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
 
     @Override
     protected void initView() {
-//        设置主界面不能够被滑动
-//        SwipeBackHelper.getCurrentPage(this)
-//                .setSwipeBackEnable(false);
-//        SwipeBackHelper.getCurrentPage(this).setDisallowInterceptTouchEvent(true);
-
-        isPhone = getIntent().getBooleanExtra("isPhone", false);
-        name = getIntent().getStringExtra("name");
-        pic = getIntent().getStringExtra("pic");
-        bmh = getIntent().getStringExtra("bmh");
-        xh = getIntent().getStringExtra("xh");
-        xf = getIntent().getStringExtra("xf");
-        if (!isPhone) {
-            ToastUtils.showLong(mContext, "欢迎" + name + "同学");
+       String username = SharedPreferencesUtil.getStringData(mContext, "username", "");
+        if (username.length()==11){
+            isPhone=true;
         }
         title_name = (TextView) findViewById(R.id.title_name);
         title_right_image = findViewById(R.id.title_right_image);
@@ -107,32 +91,6 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         //注册一个监听连接状态的listener
         EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
 
-        if (!SharedPreferencesUtil.getBooleanData(mContext, "isNickname", false)) {
-            Observable.create(new Observable.OnSubscribe<Boolean>() {
-                @Override
-                public void call(Subscriber<? super Boolean> subscriber) {
-                    subscriber.onNext(EMChatManager.getInstance().updateCurrentUserNick(name));
-
-                }
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<Boolean>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onNext(Boolean aBoolean) {
-                            SharedPreferencesUtil.saveBooleanData(mContext, "isNickname", aBoolean);
-                        }
-                    });
-        }
 
         EMContactManager.getInstance().setContactListener(new EMContactListener() {
 

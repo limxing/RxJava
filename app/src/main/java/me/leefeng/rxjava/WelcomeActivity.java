@@ -49,7 +49,6 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
 
     @Override
     protected void initView() {
-//        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(true);
         new Thread() {
             @Override
             public void run() {
@@ -73,15 +72,10 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
      * OPENIM if username not null
      */
     private void next() {
-
         if (!SharedPreferencesUtil.getStringData(mContext, "username", "").isEmpty()) {
             username = SharedPreferencesUtil.getStringData(mContext, "username", "");
             password = SharedPreferencesUtil.getStringData(mContext, "password", "");
-            if (username.length() == 11 && username.equals(password)) {
-                loginHuanXin(username);
-            } else {
-                goLogin();
-            }
+            loginHuanXin(username);
         } else {
             runOnUiThread(new Runnable() {
                 @Override
@@ -106,130 +100,9 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
         }
     }
 
-    private void goLogin() {
-        EMChatManager.getInstance().login(username, username, new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        EMGroupManager.getInstance().loadAllGroups();
-                        EMChatManager.getInstance().loadAllConversations();
-                        Log.d("main", "登录聊天服务器成功！");
-                        goBeida();
-                    }
-                });
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-                Log.d("main", "登录聊天服务器失败！");
-                if (code == 204) {
-                    registUser();
-                }
-            }
-        });
 
 
-    }
 
-    /**
-     * 自动注册
-     *
-     * @param
-     */
-    private void registUser() {
-        try {
-            // 调用sdk注册方法
-            EMChatManager.getInstance().createAccountOnServer(username, username);
-            goBeida();
-        } catch (final EaseMobException e) {
-            //注册失败
-            int errorCode = e.getErrorCode();
-            if (errorCode == EMError.NONETWORK_ERROR) {
-                Toast.makeText(getApplicationContext(), "网络异常，请检查网络！", Toast.LENGTH_SHORT).show();
-            } else if (errorCode == EMError.USER_ALREADY_EXISTS) {
-                Toast.makeText(getApplicationContext(), "用户已存在！", Toast.LENGTH_SHORT).show();
-            } else if (errorCode == EMError.UNAUTHORIZED) {
-                Toast.makeText(getApplicationContext(), "注册失败，无权限！", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "注册失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-            Intent intent = new Intent(mContext, LoginActivity.class);
-            startActivity(intent);
-        }
-
-    }
-
-    private void goBeida() {
-        RequestBody formBody = new FormBody.Builder()
-                .add("myID", username)
-                .add("myPW", password)
-                .add("usersf", "1")
-                .build();
-
-        Call call = BeidaApplication.okHttpClient.newCall(new Request.Builder()
-                .url("http://learn.pkudl.cn")
-                .post(formBody)
-                .build());
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(mContext, LoginActivity.class);
-                        startActivity(intent);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String current = "";
-                final String str = response.body().string();
-                int i = str.indexOf("<div class=\"head_wid1\">");
-                final String name = str.substring(i + 23, i + 27).trim();
-                i = str.indexOf("http://202.152.177.118/zsphoto");
-                final String pic = str.substring(i, i + 67);
-                i = str.indexOf("报名号</strong>");
-                final String bmh = str.substring(i + 13, i + 28).trim();
-                current = "学&nbsp;&nbsp;&nbsp;号</strong>：";
-                i = str.indexOf(current);
-                final String xh = str.substring(i + current.length(), i + current.length() + 14).trim();
-                i = str.indexOf("已经获得");
-                int j = str.indexOf("</td>", i);
-
-                final String xf = str.substring(i, j);
-
-                LogUtils.i("pic:" + pic + "=bmh:" + bmh + "=xf=" + xf);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        svProgressHUD.dismissImmediately();
-//                        SharedPreferencesUtil.saveStringData(mContext, "username", id);
-//                        SharedPreferencesUtil.saveStringData(mContext, "password", pw);
-
-                        Intent intent = new Intent(mContext, me.leefeng.rxjava.main.MainActivity.class);
-                        intent.putExtra("name", name);
-                        intent.putExtra("pic", pic);
-                        intent.putExtra("bmh", bmh);
-                        intent.putExtra("xh", xh);
-                        intent.putExtra("xf", xf);
-                        startActivity(intent);
-
-                    }
-                });
-
-
-            }
-        });
-    }
 
     @Override
     public void onBackPressed() {
@@ -323,7 +196,6 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
                         EMChatManager.getInstance().loadAllConversations();
                         Log.d("main", "登录聊天服务器成功！");
                         Intent intent = new Intent(mContext, MainActivity.class);
-                        intent.putExtra("isPhone", true);
                         startActivity(intent);
                     }
                 });
