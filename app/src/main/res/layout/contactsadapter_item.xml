@@ -5,13 +5,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:background="@drawable/textview_bac">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/constacts_item_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:src="@drawable/head" />
@@ -26,40 +26,6 @@
             android:text="name"
             android:textColor="#000"
             android:textSize="18dp" />
-
-        <TextView
-            android:id="@+id/contacts_item_lastmsg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/contacts_item_name"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_toRightOf="@+id/constacts_item_image"
-            android:text="last msg" />
-
-        <TextView
-            android:id="@+id/contacts_item_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:text="00:00"
-            android:textColor="#aaa"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/contacts_item_unread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/constacts_item_image"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/red_bac"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="1"
-            android:textColor="#fff"
-            android:textSize="14sp" />
 
         <View
             android:layout_width="match_parent"

@@ -3,14 +3,17 @@ package me.leefeng.rxjava.main;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ashokvarma.bottomnavigation.BottomNavigationBar;
-import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.easemob.EMConnectionListener;
 import com.easemob.EMError;
 import com.easemob.chat.EMChat;
@@ -18,9 +21,6 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactListener;
 import com.easemob.chat.EMContactManager;
 import com.easemob.util.NetUtils;
-
-import com.jude.swipbackhelper.SwipeBackHelper;
-import com.limxing.library.utils.LogUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.ToastUtils;
 import com.limxing.publicc.alertview.AlertView;
@@ -28,106 +28,45 @@ import com.limxing.publicc.alertview.OnItemClickListener;
 
 import java.util.List;
 
-import me.leefeng.rxjava.Beidadata;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.leefeng.rxjava.BeidaSwipeActivity;
+import me.leefeng.rxjava.Beidadata;
 import me.leefeng.rxjava.R;
 import me.leefeng.rxjava.down.DownActivity;
 import me.leefeng.rxjava.main.bean.Version;
-import me.leefeng.rxjava.main.chat.ContactsFragment;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import me.leefeng.rxjava.main.chat.ChatFragment;
 
 /**
  * Created by limxing on 2016/10/26.
  */
 
-public class MainActivity extends BeidaSwipeActivity implements MainView, BottomNavigationBar.OnTabSelectedListener, View.OnClickListener {
+public class MainActivity extends BeidaSwipeActivity implements MainView, View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
+    @BindView(R.id.title_back)
+    ImageView titleBack;
+    @BindView(R.id.title_name)
+    TextView titleName;
+    @BindView(R.id.title_right_image)
+    ImageView titleRightImage;
+    @BindView(R.id.tb)
+    FrameLayout tb;
+    @BindView(R.id.activity_main)
+    RelativeLayout activityMain;
+    @BindView(R.id.bottom_nav)
+    RadioGroup bottomNav;
+    @BindView(R.id.main_bottom_home)
+    RadioButton mainBottomHome;
     private HomeFragment homeFragment;
     private VideoFragment videoFragment;
-    private TextView title_name;
     private MainPreImp mainPre;
-    private ContactsFragment chatFragment;
-    private View title_right_image;
+    private ChatFragment chatFragment;
     private boolean isPhone;
+    private ContactsFragment contactsFragment;
 
     @Override
     protected void initView() {
-       String username = SharedPreferencesUtil.getStringData(mContext, "username", "");
-        if (username.length()==11){
-            isPhone=true;
-        }
-        title_name = (TextView) findViewById(R.id.title_name);
-        title_right_image = findViewById(R.id.title_right_image);
-        title_right_image.setOnClickListener(this);
-        findViewById(R.id.title_back).setVisibility(View.GONE);
-        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-        bottomNavigationBar
-                .setActiveColor(R.color.bac);
-//                .setInActiveColor(R.color.bac)
-//                .setBarBackgroundColor("#ECECEC");
-        bottomNavigationBar
-                .setMode(BottomNavigationBar.MODE_FIXED);
-        if (isPhone) {
-            bottomNavigationBar
-                    .addItem(new BottomNavigationItem(R.drawable.chat, "课程讨论"))
-                    .addItem(new BottomNavigationItem(R.drawable.video, "课程学习")).initialise();
-        } else {
-            bottomNavigationBar
-                    .addItem(new BottomNavigationItem(R.drawable.home, "个人信息"))
-                    .addItem(new BottomNavigationItem(R.drawable.chat, "课程讨论"))
-                    .addItem(new BottomNavigationItem(R.drawable.video, "课程学习"))
-//                .addItem(new BottomNavigationItem(R.drawable.download, "离线视频"))
-                    .initialise();
-        }
-        bottomNavigationBar.setTabSelectedListener(this);
-        onTabSelected(0);
-        mainPre = new MainPreImp(this);
 
-
-        //注册一个监听连接状态的listener
-        EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
-
-
-        EMContactManager.getInstance().setContactListener(new EMContactListener() {
-
-            @Override
-            public void onContactAgreed(String username) {
-                //好友请求被同意
-            }
-
-            @Override
-            public void onContactRefused(String username) {
-                //好友请求被拒绝
-            }
-
-            @Override
-            public void onContactAdded(List<String> list) {
-
-            }
-
-            @Override
-            public void onContactInvited(String username, String reason) {
-                //收到好友邀请
-            }
-
-            @Override
-            public void onContactDeleted(List<String> usernameList) {
-                //被删除时回调此方法
-            }
-
-
-        });
-        EMChat.getInstance().setAppInited();
-        title_name.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                sendBroadcast(new Intent("me.leefeng.login"));
-            }
-        }, 2000);
 
     }
 
@@ -142,57 +81,49 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
         return R.layout.activity_main;
     }
 
-
     @Override
-    public void onTabSelected(int position) {
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
         FragmentManager fm = getSupportFragmentManager();
         //开启事务
         FragmentTransaction transaction = fm.beginTransaction();
-        if (isPhone) {
-            position++;
-        }
-        switch (position) {
-            case 0:
+        switch (checkedId) {
+            case R.id.main_bottom_home:
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
                 }
                 transaction.replace(R.id.tb, homeFragment);
-                title_name.setText("个人信息");
-                title_right_image.setVisibility(View.GONE);
+                titleName.setText("个人信息");
+                titleRightImage.setVisibility(View.GONE);
                 break;
-            case 1:
+            case R.id.main_bottom_chat:
                 if (chatFragment == null) {
-                    chatFragment = ContactsFragment.getInstance();
+                    chatFragment = ChatFragment.getInstance();
                 }
                 transaction.replace(R.id.tb, chatFragment);
-                title_name.setText("课程讨论");
-                title_right_image.setVisibility(View.GONE);
+                titleName.setText("课程讨论");
+                titleRightImage.setVisibility(View.GONE);
                 break;
-            case 2:
+            case R.id.main_bottom_contacts:
+                if (contactsFragment == null) {
+                    contactsFragment = ContactsFragment.getInstance();
+                }
+                transaction.replace(R.id.tb, contactsFragment);
+                titleName.setText("联系人");
+                titleRightImage.setVisibility(View.GONE);
+                break;
+            case R.id.main_bottom_video:
                 if (videoFragment == null) {
                     videoFragment = VideoFragment.getInstance(this);
                 }
                 transaction.replace(R.id.tb, videoFragment);
-                title_name.setText("课程学习");
-                title_right_image.setVisibility(View.VISIBLE);
-                break;
-
-            default:
+                titleName.setText("课程学习");
+                titleRightImage.setVisibility(View.VISIBLE);
                 break;
         }
         // 事务提交
         transaction.commit();
     }
 
-    @Override
-    public void onTabUnselected(int position) {
-//        Log.d("limxing", "onTabUnselected() called with: " + "position = [" + position + "]");
-    }
-
-    @Override
-    public void onTabReselected(int position) {
-
-    }
 
     // 设置再按一次退出程序
     long waitTime = 2000;
@@ -283,7 +214,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
     public void openApk() {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(Beidadata.FILE_DOWN_APK),
                 "application/vnd.android.package-archive");
         startActivity(intent);
@@ -313,6 +244,68 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, Bottom
                 break;
         }
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+        String username = SharedPreferencesUtil.getStringData(mContext, "username", "");
+        if (username.length() == 11) {
+            isPhone = true;
+        }
+        titleRightImage.setOnClickListener(this);
+        findViewById(R.id.title_back).setVisibility(View.GONE);
+
+        bottomNav.setOnCheckedChangeListener(this);
+        mainPre = new MainPreImp(this);
+
+        if (isPhone) {
+            bottomNav.check(R.id.main_bottom_chat);
+           mainBottomHome.setVisibility(View.GONE);
+        } else {
+            bottomNav.check(R.id.main_bottom_home);
+        }
+        //注册一个监听连接状态的listener
+        EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
+        EMContactManager.getInstance().setContactListener(new EMContactListener() {
+
+            @Override
+            public void onContactAgreed(String username) {
+                //好友请求被同意
+            }
+
+            @Override
+            public void onContactRefused(String username) {
+                //好友请求被拒绝
+            }
+
+            @Override
+            public void onContactAdded(List<String> list) {
+
+            }
+
+            @Override
+            public void onContactInvited(String username, String reason) {
+                //收到好友邀请
+            }
+
+            @Override
+            public void onContactDeleted(List<String> usernameList) {
+                //被删除时回调此方法
+            }
+
+
+        });
+        EMChat.getInstance().setAppInited();
+        titleName.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sendBroadcast(new Intent("me.leefeng.login"));
+            }
+        }, 2000);
+    }
+
 
     //实现ConnectionListener接口
     private class MyConnectionListener implements EMConnectionListener {

@@ -33,6 +33,7 @@
         android:layout_below="@+id/chat_item_time"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@id/chat_item_image"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -42,7 +43,6 @@
             android:id="@+id/chat_item_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:background="@drawable/wx_right_chatting_bg"
             android:gravity="center">
 

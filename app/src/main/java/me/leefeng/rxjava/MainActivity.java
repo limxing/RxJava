@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.limxing.library.BaseActivity;
 import com.limxing.library.Permission.CheckPermListener;
 
@@ -43,8 +42,6 @@ public class MainActivity extends BaseActivity {
     ImageView titleRightImage;
     @BindView(R.id.tb)
     FrameLayout tb;
-    @BindView(R.id.bottom_navigation_bar)
-    BottomNavigationBar bottomNavigationBar;
     @BindView(R.id.activity_main)
     RelativeLayout activityMain;
 

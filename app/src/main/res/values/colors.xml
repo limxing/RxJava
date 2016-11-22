@@ -7,4 +7,8 @@
 
     <color name="bac">#b21117</color>
     <color name="bac_pressed">#ff1117</color>
+
+    <color name="chat_bac">#ecedf0</color>
+    <color name="list_bac">#f7f7f9</color>
+    <color name="list_select">#e1e1e1</color>
 </resources>

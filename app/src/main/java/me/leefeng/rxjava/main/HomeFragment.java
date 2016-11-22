@@ -62,7 +62,6 @@ public class HomeFragment extends Fragment {
 
     public HomeFragment() {
         LogUtils.i(getClass(), "HomeFragment");
-        goBeida();
 
     }
 
@@ -80,6 +79,7 @@ public class HomeFragment extends Fragment {
                 .post(formBody)
                 .build());
         call.enqueue(new Callback() {
+
             @Override
             public void onFailure(final Call call, IOException e) {
 
@@ -167,6 +167,8 @@ public class HomeFragment extends Fragment {
             homeXh = (TextView) view.findViewById(R.id.home_xh);
             homeXf = (TextView) view.findViewById(R.id.home_xf);
             homeImage = (ImageView) view.findViewById(R.id.home_image);
+            goBeida();
+
         }
         return view;
     }

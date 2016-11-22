@@ -118,7 +118,7 @@ public class BeidaApplication extends Application {
  * @param debugMode
  * 在做代码混淆的时候需要设置成false
  */
-        EMChat.getInstance().setDebugMode(true);//在做打包混淆时，要关闭debug模式，避免消耗不必要的资源
+        EMChat.getInstance().setDebugMode(false);//在做打包混淆时，要关闭debug模式，避免消耗不必要的资源
 //        EMOptions options = new EMOptions();
 // 默认添加好友时，是不需要验证的，改成需要验证
 //        options.setAcceptInvitationAlways(false);

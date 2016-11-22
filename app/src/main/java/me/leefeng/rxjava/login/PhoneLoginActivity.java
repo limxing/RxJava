@@ -3,6 +3,7 @@ package me.leefeng.rxjava.login;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,13 +63,15 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
                             @Override
                             public void run() {
                                 svProgressHUD.showInfoWithStatus("获取验证码成功");
-                            }});
+                            }
+                        });
 
                     } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {
                         //返回支持发送验证码的国家列表
                     }
                 } else {
                     ((Throwable) data).printStackTrace();
+                    LogUtils.i(getClass(),((Throwable) data).getMessage());
                     try {
                         final String message = JSON.parseObject(((Throwable) data).getMessage()).getString("detail");
                         runOnUiThread(new Runnable() {
@@ -80,7 +83,17 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
                                 timer.cancel();
                             }
                         });
-                    }catch (Exception e){}
+                    } catch (Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                svProgressHUD.showErrorWithStatus("获取失败，请重试");
+                                button.setEnabled(true);
+                                button.setText("获取验证码");
+                                timer.cancel();
+                            }
+                        });
+                    }
 
                 }
             }
@@ -109,7 +122,23 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
 
     public void phoneLoginButton(View view) {
         closeInput();
-        registHX(phone.getText().toString().trim());
+//        registHX(phone.getText().toString().trim());
+        String phoneNum = phone.getText().toString();
+        if (StringUtils.isEmpty(phoneNum)) {
+            svProgressHUD.showErrorWithStatus("请输入手机号");
+            return;
+        }
+        if (StringUtils.isEmpty(this.phoneNum)) {
+            svProgressHUD.showErrorWithStatus("请先获取手机验证码");
+            return;
+        }
+        String phoneCode = phone_pw.getText().toString().trim();
+        if (StringUtils.isEmpty(phoneCode)) {
+            svProgressHUD.showErrorWithStatus("请输入手机验证码");
+            return;
+        }
+        svProgressHUD.showLoading("正在登录");
+        SMSSDK.submitVerificationCode("86", phoneNum, phoneCode);
     }
 
     private TextView button;
@@ -122,6 +151,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
             svProgressHUD.showErrorWithStatus("请输入手机号");
             return;
         }
+        svProgressHUD.showLoading("正在获取验证码");
         SMSSDK.getVerificationCode("86", phoneNum.trim());
         button.setEnabled(false);
         time = 60;
@@ -146,7 +176,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
     }
 
     private void registHX(final String username) {
-        EMChatManager.getInstance().login(username,username,new EMCallBack() {//回调
+        EMChatManager.getInstance().login(username, username, new EMCallBack() {//回调
             @Override
             public void onSuccess() {
                 runOnUiThread(new Runnable() {
@@ -169,11 +199,11 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
                 Log.d("main", "登录聊天服务器失败！");
                 if (code == 204) {
                     registUser(username);
-                }else {
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            svProgressHUD.showErrorWithStatus("登录失败请重试"+code);
+                            svProgressHUD.showErrorWithStatus("登录失败请重试" + code);
                         }
                     });
                 }
@@ -191,7 +221,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
         try {
             // 调用sdk注册方法
             EMChatManager.getInstance().createAccountOnServer(username, username);
-            goMain(username);
+            registHX(username);
         } catch (final EaseMobException e) {
             //注册失败
             int errorCode = e.getErrorCode();
@@ -213,12 +243,7 @@ public class PhoneLoginActivity extends BeidaSwipeActivity {
 
 
     private void goMain(String username) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                svProgressHUD.dismissImmediately();
-            }
-        });
+        svProgressHUD.dismissImmediately();
         SharedPreferencesUtil.saveStringData(mContext, "username", username);
         SharedPreferencesUtil.saveStringData(mContext, "password", username);
         Intent intent = new Intent(this, MainActivity.class);
