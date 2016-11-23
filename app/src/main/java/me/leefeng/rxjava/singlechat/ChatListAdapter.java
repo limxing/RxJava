@@ -1,8 +1,11 @@
 package me.leefeng.rxjava.singlechat;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -108,6 +111,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
             }
             holder.chat_item_content.addView(textView);
         }
+        if (message.isUnread()) {
+            EMChatManager.getInstance().getConversation(id).markMessageAsRead(message.getMsgId());
+        }
 
     }
 
@@ -118,14 +124,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     /**
      * @param message
-     * @param isReceive
      */
-    public void addMessage(EMMessage message, boolean isReceive) {
-        if (isReceive) {
-            EMChatManager.getInstance().getConversation(id).markMessageAsRead(message.getMsgId());
-        }
+    public void addMessage(EMMessage message) {
         conversation.addMessage(message);
         notifyItemInserted(getItemCount() - 1);
+
+//                        singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
+
     }
 
     public void addMessage(List<EMMessage> l) {
@@ -169,4 +174,5 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
             warnImage = (ImageView) itemView.findViewById(R.id.chat_item_warn);
         }
     }
+
 }

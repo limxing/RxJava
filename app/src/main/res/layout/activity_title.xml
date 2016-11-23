@@ -9,7 +9,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:paddingTop="@dimen/padingTop">
+        android:paddingTop="@dimen/padingTop">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -40,9 +40,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:onClick="toDownload"
                 android:paddingRight="20dp"
                 android:src="@drawable/download"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/title_right_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:paddingRight="20dp"
+                android:text="添加"
+                android:textColor="#fff"
                 android:visibility="gone" />
         </RelativeLayout>
 

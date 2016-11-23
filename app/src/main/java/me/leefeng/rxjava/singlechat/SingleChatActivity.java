@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -34,6 +35,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.gmariotti.recyclerview.itemanimator.SlideInOutBottomItemAnimator;
+import it.gmariotti.recyclerview.itemanimator.SlideInOutTopItemAnimator;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.R;
 import rx.Observable;
@@ -129,7 +132,47 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
         singlechatListView.setAdapter(adapter);
         singlechatListView.addOnLayoutChangeListener(this);
         singlechatListView.setOnTouchListener(this);
-        singlechatListView.setItemAnimator(new DefaultItemAnimator());
+        singlechatListView.setItemAnimator(new SimpleItemAnimator() {
+            @Override
+            public boolean animateRemove(RecyclerView.ViewHolder holder) {
+                return false;
+            }
+
+            @Override
+            public boolean animateAdd(RecyclerView.ViewHolder holder) {
+                return false;
+            }
+
+            @Override
+            public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+                return false;
+            }
+
+            @Override
+            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
+                return false;
+            }
+
+            @Override
+            public void runPendingAnimations() {
+
+            }
+
+            @Override
+            public void endAnimation(RecyclerView.ViewHolder item) {
+
+            }
+
+            @Override
+            public void endAnimations() {
+
+            }
+
+            @Override
+            public boolean isRunning() {
+                return false;
+            }
+        });
         singlechatListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -242,7 +285,7 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
                 message.setTo(id);
                 message.setReceipt(id);
                 message.setFrom(EMChatManager.getInstance().getCurrentUser());
-                adapter.addMessage(message, false);
+                adapter.addMessage(message);
                 EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
                     @Override
                     public void onSuccess() {
@@ -274,7 +317,7 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
                 });
                 singlechatEdittext.setText("");
                 singlechatListView.smoothScrollToPosition(adapter.getItemCount() - 1);
-
+//                singlechatListView.scrollToPosition(adapter.getItemCount() - 1);
                 return true;
             }
         }

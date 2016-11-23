@@ -51,6 +51,12 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.home_xh)
     TextView homeXh;
     private View view;
+    private String bname;
+    private String pic;
+    private String bmh;
+    private String xh;
+    private String xf;
+    private boolean isdown;//数据是否下载完成
 
     public static HomeFragment newInstance(String param1) {
         HomeFragment fragment = new HomeFragment();
@@ -81,7 +87,7 @@ public class HomeFragment extends Fragment {
         call.enqueue(new Callback() {
 
             @Override
-            public void onFailure(final Call call, IOException e) {
+            public void onFailure( Call call, IOException e) {
 
             }
 
@@ -90,64 +96,72 @@ public class HomeFragment extends Fragment {
                 String current = "";
                 final String str = response.body().string();
                 int i = str.indexOf("<div class=\"head_wid1\">");
-                final String name = str.substring(i + 23, i + 27).trim();
+                bname = str.substring(i + 23, i + 27).trim();
                 i = str.indexOf("http://202.152.177.118/zsphoto");
-                final String pic = str.substring(i, i + 67);
+                pic = str.substring(i, i + 67);
                 i = str.indexOf("报名号</strong>");
-                final String bmh = str.substring(i + 13, i + 28).trim();
+                bmh = str.substring(i + 13, i + 28).trim();
                 current = "学&nbsp;&nbsp;&nbsp;号</strong>：";
                 i = str.indexOf(current);
-                final String xh = str.substring(i + current.length(), i + current.length() + 14).trim();
+                xh = str.substring(i + current.length(), i + current.length() + 14).trim();
                 i = str.indexOf("已经获得");
                 int j = str.indexOf("</td>", i);
 
-                final String xf = str.substring(i, j);
-
-                LogUtils.i("pic:" + pic + "=bmh:" + bmh + "=xf=" + xf);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        homeName.setText(getResources().getString(R.string.home_name) + name);
-                        homeBmh.setText(getResources().getString(R.string.home_bmh) + bmh);
-                        homeXh.setText(getResources().getString(R.string.home_xh) + xh);
-                        homeXf.setText(xf);
-                        Glide.with(getContext())
-                                .load(pic)
-                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                .into(homeImage);
-
-                    }
-                });
-                if (!SharedPreferencesUtil.getBooleanData(getActivity(), "isNickname", false)) {
-                    Observable.create(new Observable.OnSubscribe<Boolean>() {
+                xf = str.substring(i, j);
+                isdown = true;
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
                         @Override
-                        public void call(Subscriber<? super Boolean> subscriber) {
-                            subscriber.onNext(EMChatManager.getInstance().updateCurrentUserNick(name));
-
+                        public void run() {
+                            setData();
                         }
-                    }).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Observer<Boolean>() {
-                                @Override
-                                public void onCompleted() {
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-
-                                }
-
-                                @Override
-                                public void onNext(Boolean aBoolean) {
-                                    SharedPreferencesUtil.saveBooleanData(getActivity(), "isNickname", aBoolean);
-                                }
-                            });
+                    });
                 }
 
 
             }
         });
+    }
+
+    /**
+     * 设置数据
+     */
+    private void setData() {
+        homeName.setText(getResources().getString(R.string.home_name) + bname);
+        homeBmh.setText(getResources().getString(R.string.home_bmh) + bmh);
+        homeXh.setText(getResources().getString(R.string.home_xh) + xh);
+        homeXf.setText(xf);
+        Glide.with(getContext())
+                .load(pic)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(homeImage);
+        if (!SharedPreferencesUtil.getBooleanData(getActivity(), "isNickname", false)) {
+            Observable.create(new Observable.OnSubscribe<Boolean>() {
+                @Override
+                public void call(Subscriber<? super Boolean> subscriber) {
+                    subscriber.onNext(EMChatManager.getInstance().updateCurrentUserNick(bname));
+
+                }
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Boolean>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(Boolean aBoolean) {
+                            SharedPreferencesUtil.saveBooleanData(getActivity(), "isNickname", aBoolean);
+                        }
+                    });
+            isdown = false;
+        }
     }
 
     @Override
@@ -162,13 +176,12 @@ public class HomeFragment extends Fragment {
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_home, container, false);
             ButterKnife.bind(this, view);
-            homeName = (TextView) view.findViewById(R.id.home_name);
-            homeBmh = (TextView) view.findViewById(R.id.home_bmh);
-            homeXh = (TextView) view.findViewById(R.id.home_xh);
-            homeXf = (TextView) view.findViewById(R.id.home_xf);
-            homeImage = (ImageView) view.findViewById(R.id.home_image);
-            goBeida();
 
+        }
+        if (isdown) {
+            setData();
+        }else{
+            goBeida();
         }
         return view;
     }

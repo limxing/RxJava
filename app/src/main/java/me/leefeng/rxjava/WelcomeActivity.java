@@ -55,7 +55,6 @@ public class WelcomeActivity extends BeidaSwipeActivity implements
                 try {
                     sleep(3000);
                 } catch (InterruptedException e) {
-
                 }
                 checkPermission(new CheckPermListener() {
                     @Override

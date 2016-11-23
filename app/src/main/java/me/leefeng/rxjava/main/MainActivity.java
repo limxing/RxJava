@@ -1,12 +1,16 @@
 package me.leefeng.rxjava.main;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -20,6 +24,7 @@ import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactListener;
 import com.easemob.chat.EMContactManager;
+import com.easemob.exceptions.EaseMobException;
 import com.easemob.util.NetUtils;
 import com.limxing.library.utils.SharedPreferencesUtil;
 import com.limxing.library.utils.ToastUtils;
@@ -33,9 +38,18 @@ import butterknife.ButterKnife;
 import me.leefeng.rxjava.BeidaSwipeActivity;
 import me.leefeng.rxjava.Beidadata;
 import me.leefeng.rxjava.R;
+import me.leefeng.rxjava.addperson.AddPersonActivity;
 import me.leefeng.rxjava.down.DownActivity;
 import me.leefeng.rxjava.main.bean.Version;
 import me.leefeng.rxjava.main.chat.ChatFragment;
+import rx.Observable;
+import rx.Observer;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.observers.Observers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by limxing on 2016/10/26.
@@ -57,12 +71,15 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
     RadioGroup bottomNav;
     @BindView(R.id.main_bottom_home)
     RadioButton mainBottomHome;
+    @BindView(R.id.title_right_text)
+    TextView titleRightText;
     private HomeFragment homeFragment;
     private VideoFragment videoFragment;
     private MainPreImp mainPre;
     private ChatFragment chatFragment;
     private boolean isPhone;
     private ContactsFragment contactsFragment;
+    private Fragment currentFragment;
 
     @Override
     protected void initView() {
@@ -91,36 +108,42 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
                 }
-                transaction.replace(R.id.tb, homeFragment);
+                currentFragment = homeFragment;
+
                 titleName.setText("个人信息");
                 titleRightImage.setVisibility(View.GONE);
+                titleRightText.setVisibility(View.GONE);
                 break;
             case R.id.main_bottom_chat:
                 if (chatFragment == null) {
                     chatFragment = ChatFragment.getInstance();
                 }
-                transaction.replace(R.id.tb, chatFragment);
+                currentFragment = chatFragment;
                 titleName.setText("课程讨论");
                 titleRightImage.setVisibility(View.GONE);
+                titleRightText.setVisibility(View.GONE);
                 break;
             case R.id.main_bottom_contacts:
                 if (contactsFragment == null) {
                     contactsFragment = ContactsFragment.getInstance();
                 }
-                transaction.replace(R.id.tb, contactsFragment);
+                currentFragment = contactsFragment;
                 titleName.setText("联系人");
                 titleRightImage.setVisibility(View.GONE);
+                titleRightText.setVisibility(View.VISIBLE);
                 break;
             case R.id.main_bottom_video:
                 if (videoFragment == null) {
                     videoFragment = VideoFragment.getInstance(this);
                 }
-                transaction.replace(R.id.tb, videoFragment);
+                currentFragment = videoFragment;
                 titleName.setText("课程学习");
                 titleRightImage.setVisibility(View.VISIBLE);
+                titleRightText.setVisibility(View.GONE);
                 break;
         }
         // 事务提交
+        transaction.replace(R.id.tb, currentFragment);
         transaction.commit();
     }
 
@@ -226,14 +249,6 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
         return getContext();
     }
 
-    /**
-     * 缓存按钮
-     *
-     * @param view
-     */
-    public void toDownload(View view) {
-
-    }
 
     @Override
     public void onClick(View view) {
@@ -241,6 +256,49 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
             case R.id.title_right_image:
                 Intent intent = new Intent(this, DownActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.title_right_text:
+//                intent = new Intent(this, AddPersonActivity.class);
+//                startActivity(intent);
+
+                final EditText editText = new EditText(this);
+                new AlertDialog.Builder(this)
+                        .setTitle("请输入联系人ID")
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                final String s = editText.getText().toString();
+                                Observable.create(new Observable.OnSubscribe<Boolean>() {
+                                    @Override
+                                    public void call(Subscriber<? super Boolean> subscriber) {
+                                        boolean b = false;
+                                        try {
+                                            EMContactManager.getInstance().addContact(s, "");//需异步处理
+                                            b = true;
+                                        } catch (EaseMobException e) {
+                                            e.printStackTrace();
+                                            b = false;
+                                        }
+                                        subscriber.onNext(b);
+                                    }
+                                }).subscribeOn(Schedulers.newThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new Action1<Boolean>() {
+                                            @Override
+                                            public void call(Boolean aBoolean) {
+                                                if (aBoolean) {
+                                                    svProgressHUD.showSuccessWithStatus("请求成功");
+                                                } else {
+                                                    svProgressHUD.showErrorWithStatus("添加失败，请重试");
+                                                }
+                                            }
+                                        });
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
                 break;
         }
     }
@@ -255,6 +313,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
             isPhone = true;
         }
         titleRightImage.setOnClickListener(this);
+        titleRightText.setOnClickListener(this);
         findViewById(R.id.title_back).setVisibility(View.GONE);
 
         bottomNav.setOnCheckedChangeListener(this);
@@ -262,7 +321,7 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
 
         if (isPhone) {
             bottomNav.check(R.id.main_bottom_chat);
-           mainBottomHome.setVisibility(View.GONE);
+            mainBottomHome.setVisibility(View.GONE);
         } else {
             bottomNav.check(R.id.main_bottom_home);
         }
@@ -273,6 +332,10 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
             @Override
             public void onContactAgreed(String username) {
                 //好友请求被同意
+                svProgressHUD.showSuccessWithStatus("添加" + username + "成功");
+                if (currentFragment == contactsFragment) {
+                    contactsFragment.notifyDataChanged();
+                }
             }
 
             @Override
@@ -286,8 +349,19 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
             }
 
             @Override
-            public void onContactInvited(String username, String reason) {
+            public void onContactInvited(final String username, String reason) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            EMChatManager.getInstance().acceptInvitation(username);//需异步处理
+                        } catch (EaseMobException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 //收到好友邀请
+
             }
 
             @Override

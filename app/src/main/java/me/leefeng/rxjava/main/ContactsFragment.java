@@ -139,4 +139,12 @@ public class ContactsFragment extends Fragment implements LFRecyclerView.LFRecyc
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+    /**
+     * 监听到好有变化
+     */
+    public void notifyDataChanged() {
+        getData();
+
+    }
 }
