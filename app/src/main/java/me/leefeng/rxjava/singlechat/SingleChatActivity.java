@@ -132,47 +132,6 @@ public class SingleChatActivity extends BeidaSwipeActivity implements SingleChat
         singlechatListView.setAdapter(adapter);
         singlechatListView.addOnLayoutChangeListener(this);
         singlechatListView.setOnTouchListener(this);
-        singlechatListView.setItemAnimator(new SimpleItemAnimator() {
-            @Override
-            public boolean animateRemove(RecyclerView.ViewHolder holder) {
-                return false;
-            }
-
-            @Override
-            public boolean animateAdd(RecyclerView.ViewHolder holder) {
-                return false;
-            }
-
-            @Override
-            public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-                return false;
-            }
-
-            @Override
-            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
-                return false;
-            }
-
-            @Override
-            public void runPendingAnimations() {
-
-            }
-
-            @Override
-            public void endAnimation(RecyclerView.ViewHolder item) {
-
-            }
-
-            @Override
-            public void endAnimations() {
-
-            }
-
-            @Override
-            public boolean isRunning() {
-                return false;
-            }
-        });
         singlechatListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
