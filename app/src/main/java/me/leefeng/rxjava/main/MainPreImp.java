@@ -92,8 +92,8 @@ public class MainPreImp implements MainPre {
                                 }
                                 if (JSON.parseObject(IOUtils.streamToString(new FileInputStream(couseFile)))
                                         .getIntValue("courseVersion") < version.getCourse())
-                                    mainView.updateDialog(version.getTitle(), version.getValue());
-
+//                                    mainView.updateDialog(version.getTitle(), version.getValue());
+                                    upDateCouse();
                             } catch (PackageManager.NameNotFoundException e) {
                                 e.printStackTrace();
                             } catch (FileNotFoundException e) {

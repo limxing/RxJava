@@ -204,7 +204,8 @@ public class MainActivity extends BeidaSwipeActivity implements MainView, View.O
 
     @Override
     public void updateDialog(String s, String updateString) {
-        new AlertView(s, updateString, "暂不更新", null, new String[]{"开始更新"}, mContext, AlertView.Style.Alert, new OnItemClickListener() {
+        new AlertView(s, updateString, "暂不更新", null, new String[]{"开始更新"}, mContext,
+                AlertView.Style.Alert, new OnItemClickListener() {
             @Override
             public void onItemClick(Object o, int position) {
                 if (position == 0) {

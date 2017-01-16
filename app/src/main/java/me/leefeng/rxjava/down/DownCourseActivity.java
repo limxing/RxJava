@@ -88,6 +88,7 @@ public class DownCourseActivity extends BeidaSwipeActivity implements View.OnCli
         newplayer_recycleview.setAdapter(mAdapter);
         newplayer_recycleview.setLayoutManager(new LinearLayoutManager(this));
         newplayer_recycleview.addItemDecoration(new StickyRecyclerHeadersDecoration(mAdapter));
+
         initListData();
         initPlayer();
         mAdapter.setOnItemClickListener(new PlayerListAdapter.OnItemClickListener() {
